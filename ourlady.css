@@ -39,7 +39,7 @@ html{
   height: 100%;
   background: rgb(126,183,240);
   background: linear-gradient(180deg, rgba(126,183,240,1) 0%, rgba(244,223,173,1) 40%, rgba(240,173,137,1) 60%, rgba(95,89,185,1) 100%);
-  overflow: auto;
+  overflow: hidden;
 }
 
 
