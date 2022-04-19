@@ -18,7 +18,7 @@ body {
 p {
  line-height: 1.3em;
 /* font-size: 25px; */
- font-size: 1.3em;
+ font-size: 1.1em;
 }
 
 a {
@@ -44,7 +44,7 @@ li {
  margin: 0%;
  padding: 0;
  padding-bottom: 40;
- font-size: 1.3em;
+ font-size: 1.1em;
 }
 
 iframe {
@@ -71,7 +71,7 @@ iframe {
   font-family: "AnalectaRegular", Courier;
   font-style: bold;
   color: #b1b5cd;
-  font-size: 2.6em;
+  font-size: 1.7em;
  }
 
 
@@ -85,7 +85,7 @@ h3 {
  font-family: "RawlineRegular","Century Gothic","Apple Gothic",AppleGothic,"URW Gothic L","Avant Garde",Futura,sans-serif;
  font-style: bold;
  margin-top: 3em;
- font-size: 1.7em;
+ font-size: 1.3em;
 }
 
 .topnav li {
@@ -121,7 +121,7 @@ h3 {
 }
 
 .date {
- font-size: 1.25em;
+ font-size: 1em;
  opacity: 0.5;
 }
 
