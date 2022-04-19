@@ -1,4 +1,1 @@
-# rosary.githib.io 
-# rosary.tk
-
-Pray the rosary every day!
+# rosary.githib.io / rosary.tk
