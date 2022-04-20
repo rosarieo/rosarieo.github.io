@@ -1,5 +1,9 @@
-# rosarieo.githib.io / rosary.tk
+# rosarieo.github.io / rosary.tk
 
 website: https://rosary.tk
+<br>
+github pages: https://rosarieo.github.io
+<br>
+repo: https://github.com/rosarieo/rosarieo.github.io
 <br>
 contact: https://form.jotform.com/210341816022138
