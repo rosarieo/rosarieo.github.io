@@ -4,6 +4,6 @@ website: https://rosary.tk
 <br>
 github pages: https://rosarieo.github.io
 <br>
-repo: https://github.com/rosarieo/rosarieo.github.io
+github: https://github.com/rosarieo
 <br>
 contact: https://form.jotform.com/210341816022138
