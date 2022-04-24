@@ -33,7 +33,7 @@ del:visited {color:#FFFFFF;}
 del:hover {color:#848484;}
 del:active {color:#FFFFFF;}
 
-/* Gradient Background */
+/* Gradient Background
 
 html{
   height: 100%;
@@ -41,12 +41,12 @@ html{
   background: linear-gradient(180deg, rgba(126,183,240,1) 0%, rgba(244,223,173,1) 40%, rgba(240,173,137,1) 60%, rgba(95,89,185,1) 100%);
   overflow: hidden;
 }
+*/
 
-
-/* Space and Star Background
+/* Space and Star Background https://i.ibb.co/87GbbFP/2799006.jpg */ 
 
 .bg {
-    background: url(https://i.ibb.co/87GbbFP/2799006.jpg) no-repeat;
+    background: url(/images/stars/2799006.jpg) no-repeat;
     background-size: cover;
     height: 100%;
     width: 100%;
@@ -135,7 +135,6 @@ html{
     animation: sf-fly-by-3 5s linear infinite;
 }
 
-*/
 
 #blur{
     font-size: 40px;
