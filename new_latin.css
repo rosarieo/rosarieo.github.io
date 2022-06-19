@@ -9,7 +9,10 @@
 @import url('https://fontlibrary.org//face/rawline');
 
 body {
- margin: 2%;
+
+margin:40px auto;
+  max-width:850px;
+  padding:0 10px;
  background-color: #272a3d;
  color: oldlace;
  font-family: "RawlineRegular","Century Gothic","Apple Gothic","URW Gothic L","Avant Garde","sans-serif";
