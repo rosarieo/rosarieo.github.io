@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Pondering me orb</title>
+        <link rel="stylesheet" href="dot.css"/>         
+    </head>
+    <body>
+        <!-- <blink>AYYY LMAO</blink> -->
+        <div id="orbholder">        
+            <img id="orb" src="images/jpg/orb.jpeg"/>
+            <div id="flare_wrap">
+                <img id="flare1" class="flare" src="images/png/flare.png"/>
+                <img id="flare2" class="flare" src="images/png/flare.png"/>
+            </div>
+            <!--<iframe id="glowinthedark" src="https://global-mind.org/gcpdot/gcp.html"  scrolling="no" marginwidth="0" marginheight="0" frameborder="0" ></iframe>-->
+            <iframe id="gcpdotframe" src="https://global-mind.org/gcpdot/gcp.html"     width="360" height="364"  scrolling="no" marginwidth="0" marginheight="0" frameborder="0" ></iframe>
+        </div>
+        <script>
+            //reload the page every 6 hours, for some reason the gcpdot xhr fails if running for too long
+            setTimeout(()=>{ window.location.reload(); },1000*60*60*3);
+			
+			//shenanigans
+			window.addEventListener('focus',(e)=>{				
+				var _frame = document.getElementById('gcpdotframe');
+				let thesrc = _frame.src;
+				_frame.src="about:blank";
+				_frame.src = thesrc;
+			},{ once: true });
+        </script>
+    </body>
+</html>

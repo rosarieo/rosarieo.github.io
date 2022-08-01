@@ -1,0 +1,113 @@
+
+blink {
+    -webkit-animation: 1.0s linear infinite condemned_blink_effect; /* for Safari 4.0 - 8.0 */
+    animation: 1.0s linear infinite condemned_blink_effect;
+}
+
+/* for Safari 4.0 - 8.0 */
+@-webkit-keyframes condemned_blink_effect {
+    0% {
+        visibility: hidden;
+    }
+    50% {
+        visibility: hidden;
+    }
+    100% {
+        visibility: visible;
+    }
+}
+
+@keyframes condemned_blink_effect {
+    0% {
+        visibility: hidden;
+    }
+    50% {
+        visibility: hidden;
+    }
+    100% {
+        visibility: visible;
+    }
+}
+
+html, body {
+    overflow: hidden;
+}
+
+html {
+    background: #000;
+}
+
+body {
+    display: flex;
+    min-height: 100vh;
+}
+
+body *{
+    user-select: none;
+}
+
+#orb {
+    min-width: 1244px;
+    min-height: 750px;
+}
+
+#gcpdotframe {
+    position: absolute;
+    width: 360px;
+    height: 364px;
+    transform: matrix(1.11142, 0, 0, 1.10135, 180, 284);
+    -webkit-transform: matrix(1.11142, 0, 0, 1.10135, 180, 284);
+    opacity: 0.95;
+}
+
+#orbholder {
+    position: relative;
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+}
+
+#glowinthedark {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    display: block;
+    opacity: .17;
+    z-index: 333;
+    transform: scale(4);
+    pointer-events: none;
+}
+
+.flare {
+    position: absolute;
+    transform: scale(0.425) rotate(66deg);
+    opacity: 0.00;
+}
+
+#flare_wrap:hover #flare1 {
+    opacity: 0.90;
+}
+
+#flare_wrap:hover #flare2 {
+    opacity: 0.60;
+}
+
+#flare1 {
+    left: -356%;
+    top: -74%;
+
+}
+
+#flare2 {
+    left: -329%;
+    top: -76%;
+
+}
+
+#flare_wrap {
+    position: absolute;
+    transform: translate(546px, -71px);
+    width: 82px;
+    height: 372px;
+}
