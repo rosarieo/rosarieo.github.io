@@ -1,0 +1,138 @@
+
+/* new_latin.css - Pray the Rosary Daily */
+
+/* @import url('https://fonts.googleapis.com/css?family=Muli'); /* (Muli h2 body)  */
+/* @import url('https://fonts.googleapis.com/css?family=Special+Elite'); /* (original h1) */
+/* @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&display=swap'); /* (Cinzel Decorative h1) */
+
+@import url('https://fontlibrary.org//face/analecta');
+@import url('https://fontlibrary.org//face/rawline');
+
+body {
+ margin: 2%;
+ background-color: #272a3d;
+ color: oldlace;
+ font-family: "RawlineRegular","Century Gothic","Apple Gothic","URW Gothic L","Avant Garde","sans-serif";
+}
+
+p {
+ line-height: 1.3em;
+/* font-size: 25px; */
+ font-size: 1.1em;
+}
+
+a {
+ color: #b1b5cd;
+/* color: wheat; */
+ font-size: 1em;
+}
+
+br {
+ line-height: 2em;
+}
+
+blockquote {
+ font-family:monospace;
+}
+
+img {
+ display: block;
+ margin-left: auto;
+ margin-right: auto;
+}
+
+li {
+ margin: 0%;
+ padding: 0;
+ padding-bottom: 40;
+ font-size: 1.1em;
+}
+
+iframe {
+ display: block;
+ margin: auto;
+}
+
+/* top navigation */
+.topnav {
+/* 	background-color: #333; */
+ margin: 0;
+ padding: 0;
+ border-width: 0;
+ /*overflow: hidden;*/
+ display: block;
+ position: block;
+ margin-left: auto;
+ margin-right: auto;
+ text-align: center;
+
+}
+
+ h1 {
+  font-family: "AnalectaRegular", Courier;
+  font-style: bold;
+  color: #b1b5cd;
+  font-size: 1.9em;
+ }
+
+
+h2 {
+ font-family: "RawlineRegular","Century Gothic","Apple Gothic",AppleGothic,"URW Gothic L","Avant Garde",Futura,sans-serif;
+ font-style: bold;
+ margin-top: 3em;
+}
+
+h3 {
+ font-family: "RawlineRegular","Century Gothic","Apple Gothic",AppleGothic,"URW Gothic L","Avant Garde",Futura,sans-serif;
+ font-style: bold;
+ margin-top: 3em;
+ font-size: 1.3em;
+}
+
+.topnav li {
+ display: inline;
+}
+
+/* Style the links inside the navigation bar */
+.topnav a {
+ font-family: Muli,"Century Gothic","Apple Gothic",AppleGothic,"URW Gothic L","Avant Garde",Futura,sans-serif;
+ font-style: bold;
+ float: auto;
+ color: oldlace;
+ text-align: center;
+ display: inline-block;
+ padding: 0px 44px;
+ text-decoration: none;
+ font-size: 1.7em;
+}
+
+/* Change the color of links on hover */
+.topnav a:hover {
+ background-color: oldlace;
+ color: black;
+ border-radius: 4%;
+}
+
+.center-fit {
+ width: auto;
+ max-width: 100%;
+ max-height: 60vh;
+ min-height: 40vh;
+ margin: auto;
+}
+
+.date {
+ font-size: 1em;
+ opacity: 0.5;
+}
+
+.socialmedia {
+ display: block;
+ text-align: center;
+}
+
+.socialmedia li {
+ display: inline-block;
+ opacity: 0.5;
+ border-radius: 10%;
+}
