@@ -50,6 +50,7 @@ html{
 }
 */
 
+
 /* Space and Star Background
 
 .bg {
@@ -147,7 +148,7 @@ html{
 #blur{
     font-size: 40px;
     color: transparent;
-    text-shadow: 0 0 10px white;
+    text-shadow: 0 0 12px white;
 }
 
 #divider  {
