@@ -1,9 +1,5 @@
 
-/* new_latin.css - Pray the Rosary Daily */
-
-/* @import url('https://fonts.googleapis.com/css?family=Muli'); /* (Muli h2 body)  */
-/* @import url('https://fonts.googleapis.com/css?family=Special+Elite'); /* (original h1) */
-/* @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&display=swap'); /* (Cinzel Decorative h1) */
+/* latin.css - Pray the Rosary Daily */
 
 @import url('https://fontlibrary.org//face/analecta');
 @import url('https://fontlibrary.org//face/rawline');
@@ -14,6 +10,13 @@ body {
  background-color: #272a3d;
  color: oldlace;
  font-family: "RawlineRegular","Century Gothic","Apple Gothic","URW Gothic L","Avant Garde","sans-serif";
+}
+
+/* For mobile phones: */
+@media screen and (min-width: 699px) {
+  body {
+    margin: 2%;
+  }
 }
 
 p {
