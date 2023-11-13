@@ -13,9 +13,10 @@ body {
 }
 
 /* For mobile phones: */
-@media screen and (min-width: 699px) {
+@media screen and (max-width: 699px) {
   body {
-    margin: 2%;
+margin: 1.6em 1.6em; /* top and bottom: 1.6em margin */
+                     /* left and right: 1.6em margin */
   }
 }
 
