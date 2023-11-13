@@ -20,7 +20,7 @@ margin: 1.6em 10em; /* top and bottom: 1.6em margin */
   }
 }
 
-@media screen and (max-width: 749px) {
+@media screen and (max-width: 850px) {
   body {
 margin: 1.6em 1.6em; /* top and bottom: 1.6em margin */
                      /* left and right: 1.6em margin */
