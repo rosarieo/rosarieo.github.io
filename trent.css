@@ -1,5 +1,5 @@
 
-/* trent.css - Pray the Rosary Daily */
+/* latin.css - Pray the Rosary Daily */
 
 @import url('https://fontlibrary.org//face/analecta');
 @import url('https://fontlibrary.org//face/rawline');
@@ -28,9 +28,9 @@ margin: 1.6em 1.6em; /* top and bottom: 1.6em margin */
 }
 
 p {
- line-height: 1.3em;
+ line-height: 1.2em;
 /* font-size: 25px; */
- font-size: 1.2em;
+ font-size: 1em;
 }
 
 a {
@@ -84,7 +84,7 @@ iframe {
   font-family: "AnalectaRegular", Courier;
   font-style: bold;
   color: #b1b5cd;
-  font-size: 1.9em;
+  font-size: 1.7em;
  }
 
 
@@ -98,7 +98,7 @@ h3 {
  font-family: "RawlineRegular","Century Gothic","Apple Gothic",AppleGothic,"URW Gothic L","Avant Garde",Futura,sans-serif;
  font-style: bold;
  margin-top: 3em;
- font-size: 1.3em;
+ font-size: 1.2em;
 }
 
 .topnav li {
@@ -115,7 +115,7 @@ h3 {
  display: inline-block;
  padding: 0px 44px;
  text-decoration: none;
- font-size: 1.7em;
+ font-size: 1.5em;
 }
 
 /* Change the color of links on hover */
