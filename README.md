@@ -1,7 +1,5 @@
 # rosarieo.github.io 
 
-website: https://derelict.ca
-<br>
 github pages: https://rosarieo.github.io
 <br>
 github: https://github.com/rosarieo
