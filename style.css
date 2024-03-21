@@ -1,0 +1,26 @@
+
+body {
+  background-image: url('/images/jpg/111.jpg');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+}
+
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+#blur{
+    font-size: 2.5em;
+    color: transparent;
+    text-shadow: 0 0 6px #bfbfbf;
+}
+
+ .m {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 11vh;
+  width: 8.5vw;
+}
