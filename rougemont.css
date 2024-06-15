@@ -1,9 +1,9 @@
 
 body {
-  background-image: url('images/jpg/whiting.jpg');
+  background-image: url('images/jpg/old.jpg');
   background-repeat: no-repeat;
   background-attachment: fixed;
-  background-size: contain;
+  background-size: cover;
 }
 
 .image {
