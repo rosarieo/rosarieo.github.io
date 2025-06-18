@@ -7,8 +7,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
     <style>
+        /* Original CSS unchanged */
         :root {
             --bg-dark: #121212;
             --bg-surface: #1e1e1e;
@@ -121,44 +121,44 @@
         #prayer-lang-tabs { display: block; }
         #prayer-lang-tabs.hidden { display: none; }
 
-.mystery-image-container {
-    display: block !important; /* Force visibility */
-    overflow: hidden;
-    margin: 0 auto var(--content-gap) auto;
-    padding: var(--image-padding);
-    border: var(--image-border-thickness) solid var(--current-accent-color);
-    border-radius: var(--border-radius-md);
-    max-width: var(--image-max-width);
-    min-height: calc(var(--image-max-width) + 2 * var(--image-padding)); /* Ensure container has height */
-    background-color: var(--bg-dark);
-    position: relative;
-    z-index: 1;
-    transition: border-color 0.3s ease;
-}
+        .mystery-image-container {
+            display: block !important;
+            overflow: hidden;
+            margin: 0 auto var(--content-gap) auto;
+            padding: var(--image-padding);
+            border: var(--image-border-thickness) solid var(--current-accent-color);
+            border-radius: var(--border-radius-md);
+            max-width: var(--image-max-width);
+            min-height: calc(var(--image-max-width) + 2 * var(--image-padding));
+            background-color: var(--bg-dark);
+            position: relative;
+            z-index: 1;
+            transition: border-color: 0.3s ease;
+        }
 
-.mystery-image {
-    display: block !important; /* Force visibility */
-    width: 100%;
-    height: auto;
-    min-height: var(--image-max-width); /* Prevent collapse */
-    aspect-ratio: 1 / 1;
-    object-fit: contain;
-    border-radius: var(--border-radius-sm);
-    background-color: var(--bg-dark);
-    transition: opacity 0.2s ease;
-    will-change: opacity;
-}
+        .mystery-image {
+            display: block !important;
+            width: 100%;
+            height: auto;
+            min-height: var(--image-max-width);
+            aspect-ratio: 1 / 1;
+            object-fit: contain;
+            border-radius: var(--border-radius-sm);
+            background-color: var(--bg-dark);
+            transition: opacity 0.2s ease;
+            will-change: opacity;
+        }
 
-.prayer-card {
-    background-color: var(--bg-surface);
-    padding: var(--padding-standard);
-    border-radius: var(--border-radius-md);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-    min-height: 80px;
-    position: relative;
-    z-index: 0;
-    margin-top: var(--content-gap); /* Default for mobile */
-}
+        .prayer-card {
+            background-color: var(--bg-surface);
+            padding: var(--padding-standard);
+            border-radius: var(--border-radius-md);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            min-height: 80px;
+            position: relative;
+            z-index: 0;
+            margin-top: var(--content-gap);
+        }
         #prayer-text {
             font-size: var(--prayer-font-size); text-align: left; white-space: pre-wrap;
             line-height: 1.7; transition: opacity 0.15s ease-in-out; color: var(--text-primary);
@@ -252,136 +252,137 @@
 
         .hidden { display: none !important; }
 
-/* Desktop layout */
-@media (min-width: 992px) {
-    :root {
-        --base-font-size: 1.05rem;
-        --padding-standard: 20px;
-        --content-gap: 24px;
-        --image-max-width: 320px;
-        --footer-height: 55px;
-    }
+        /* Desktop layout */
+        @media (min-width: 992px) {
+            :root {
+                --base-font-size: 1.05rem;
+                --padding-standard: 20px;
+                --content-gap: 24px;
+                --image-max-width: 320px;
+                --footer-height: 55px;
+            }
 
-    body {
-        padding-top: 0;
-        overflow-y: hidden;
-    }
+            body {
+                padding-top: 0;
+                overflow-y: hidden;
+            }
 
-    .desktop-wrapper {
-        display: flex;
-        height: 100vh;
-    }
+            .desktop-wrapper {
+                display: flex;
+                height: 100vh;
+            }
 
-    .side-menu {
-        position: relative;
-        transform: translateX(0);
-        flex-shrink: 0;
-        height: 100%;
-        padding-top: var(--indicator-bar-height);
-        box-shadow: 3px 0 10px rgba(0, 0, 0, 0.2);
-        z-index: 1;
-    }
-    .side-menu.open {
-        transform: translateX(0);
-    }
+            .side-menu {
+                position: relative;
+                transform: translateX(0);
+                flex-shrink: 0;
+                height: 100%;
+                padding-top: var(--indicator-bar-height);
+                box-shadow: 3px 0 10px rgba(0, 0, 0, 0.2);
+                z-index: 1;
+            }
+            .side-menu.open {
+                transform: translateX(0);
+            }
 
-    .menu-toggle-btn, .menu-overlay {
-        display: none;
-    }
-    body.menu-open .menu-overlay {
-        display: none;
-    }
+            .menu-toggle-btn, .menu-overlay {
+                display: none;
+            }
+            body.menu-open .menu-overlay {
+                display: none;
+            }
 
-    .app-container {
-        flex-grow: 1;
-        min-height: 100vh;
-        padding-top: calc(var(--indicator-bar-height) + var(--header-height));
-        padding-bottom: var(--footer-height);
-        position: relative;
-        overflow-y: hidden;
-        margin-left: 0;
-        width: calc(100% - var(--menu-width)); /* Ensure full width minus menu */
-    }
+            .app-container {
+                flex-grow: 1;
+                min-height: 100vh;
+                padding-top: calc(var(--indicator-bar-height) + var(--header-height));
+                padding-bottom: var(--footer-height);
+                position: relative;
+                overflow-y: hidden;
+                margin-left: 0;
+                width: calc(100% - var(--menu-width));
+            }
 
-    .progress-indicator-bar, .app-header, .app-footer {
-        left: var(--menu-width);
-        width: calc(100% - var(--menu-width));
-        right: auto;
-    }
-    .progress-indicator-bar {
-        z-index: 1011;
-    }
-    .app-header {
-        z-index: 1010;
-        padding: 0 var(--padding-standard);
-    }
-    .app-footer {
-        z-index: 1010;
-    }
+            .progress-indicator-bar, .app-header, .app-footer {
+                left: var(--menu-width);
+                width: calc(100% - var(--menu-width));
+                right: auto;
+            }
+            .progress-indicator-bar {
+                z-index: 1011;
+            }
+            .app-header {
+                z-index: 1010;
+                padding: 0 var(--padding-standard);
+            }
+            .app-footer {
+                z-index: 1010;
+            }
 
-    .header-title {
-        text-align: left;
-        padding-left: 0;
-    }
-    .header-spacer {
-        display: none;
-    }
+            .header-title {
+                text-align: left;
+                padding-left: 0;
+            }
+            .header-spacer {
+                display: none;
+            }
 
-    .main-content {
-        display: flex !important; /* Ensure flexbox */
-        flex-direction: row;
-        gap: var(--content-gap);
-        align-items: flex-start;
-        justify-content: flex-start; /* Left-justify content */
-        height: calc(100vh - var(--indicator-bar-height) - var(--header-height) - var(--footer-height) - 2 * var(--padding-standard));
-        padding: var(--padding-standard);
-        margin: 0; /* Remove centering */
-        width: 100%; /* Full width of app-container */
-        overflow-y: auto;
-        scrollbar-width: thin;
-        scrollbar-color: var(--border-color) var(--bg-surface);
-    }
-    .main-content::-webkit-scrollbar {
-        width: 8px;
-    }
-    .main-content::-webkit-scrollbar-track {
-        background: var(--bg-surface);
-    }
-    .main-content::-webkit-scrollbar-thumb {
-        background-color: var(--border-color);
-        border-radius: 4px;
-    }
+            .main-content {
+                display: flex !important;
+                flex-direction: row;
+                gap: var(--content-gap);
+                align-items: flex-start;
+                justify-content: flex-start;
+                height: calc(100vh - var(--indicator-bar-height) - var(--header-height) - var(--footer-height) - 2 * var(--padding-standard));
+                padding: var(--padding-standard);
+                margin: 0;
+                width: 100%;
+                overflow-y: auto;
+                scrollbar-width: thin;
+                scrollbar-color: var(--border-color) var(--bg-surface);
+            }
+            .main-content::-webkit-scrollbar {
+                width: 8px;
+            }
+            .main-content::-webkit-scrollbar-track {
+                background: var(--bg-surface);
+            }
+            .main-content::-webkit-scrollbar-thumb {
+                background-color: var(--border-color);
+                border-radius: 4px;
+            }
 
-    .mystery-image-container {
-        flex: 0 0 auto; /* Fixed width, no shrink/grow */
-        max-width: var(--image-max-width);
-        margin: 0 !important; /* Remove margins */
-        margin-top: calc(var(--padding-standard) / 2);
-        position: sticky;
-        top: var(--padding-standard);
-        min-height: calc(var(--image-max-width) + 2 * var(--image-padding));
-    }
+            .mystery-image-container {
+                flex: 0 0 auto;
+                max-width: var(--image-max-width);
+                margin: 0 !important;
+                margin-top: calc(var(--padding-standard) / 2);
+                position: sticky;
+                top: var(--padding-standard);
+                min-height: calc(var(--image-max-width) + 2 * var(--image-padding));
+            }
 
-    .prayer-card {
-        flex-grow: 1; /* Take remaining space */
-        min-height: 200px;
-        margin-top: 0 !important; /* Align with image */
-    }
+            .prayer-card {
+                flex-grow: 1;
+                min-height: 200px;
+                margin-top: 0 !important;
+            }
 
-    .litany-tabs-container.visible, #prayer-lang-tabs.visible {
-        flex-basis: 100%;
-        order: -1;
-        margin-bottom: var(--content-gap);
-        text-align: left;
-    }
-    .litany-tab-button {
-        margin: 0 6px 0 0;
-    }
+            .litany-tabs-container.visible, #prayer-lang-tabs.visible {
+                flex-basis: 100%;
+                order: -1;
+                margin-bottom: var(--content-gap);
+                text-align: left;
+            }
+            .litany-tab-button {
+                margin: 0 6px 0 0
 
-    .progress-info {
-        font-size: 0.85rem;
-    }
-}
+            }
+
+            .progress-info {
+                font-size: 0.85rem;
+            }
+        }
     </style>
 </head>
 <body class="theme-glorious">
@@ -571,7 +572,7 @@
                 const mysteries = {
                     joyful: {
                         title: 'Joyful Mysteries',
-                        days: [1, 6],
+                        days: [1, 4, 6],
                         mysteries: [
                             {
                                 name: 'The Annunciation',
@@ -607,7 +608,7 @@
                     },
                     luminous: {
                         title: 'Luminous Mysteries',
-                        days: [4],
+                        days: [],
                         mysteries: [
                             {
                                 name: 'The Baptism of Jesus',
@@ -718,10 +719,9 @@
                 // --- Utility Functions ---
                 function getTodaysMysteries() {
                     const today = new Date().getDay();
-                    if ([1, 6].includes(today)) return 'joyful';
-                    if (today === 4) return 'luminous';
-                    if ([2, 5].includes(today)) return 'sorrowful';
-                    return 'glorious';
+                    if ([1, 4, 6].includes(today)) return 'joyful'; // Monday, Thursday, Saturday
+                    if ([2, 5].includes(today)) return 'sorrowful'; // Tuesday, Friday
+                    return 'glorious'; // Wednesday, Sunday
                 }
 
                 function saveStateToLocalStorage() {
@@ -785,120 +785,120 @@
                     return sequence;
                 }
 
-function updateDisplay() {
-    console.log('updateDisplay called with state:', state);
+                function updateDisplay() {
+                    console.log('updateDisplay called with state:', state);
 
-    if (!prayerTextEl || !mysteryImageEl || !mysteryImageContainerEl) {
-        console.error('CRITICAL: Essential elements missing!', { prayerTextEl, mysteryImageEl, mysteryImageContainerEl });
-        if (prayerTextEl) prayerTextEl.textContent = 'Error: Missing required elements.';
-        return;
-    }
+                    if (!prayerTextEl || !mysteryImageEl || !mysteryImageContainerEl) {
+                        console.error('CRITICAL: Essential elements missing!', { prayerTextEl, mysteryImageEl, mysteryImageContainerEl });
+                        if (prayerTextEl) prayerTextEl.textContent = 'Error: Missing required elements.';
+                        return;
+                    }
 
-    // Preload image with timeout to ensure stability
-    const preloadImage = (src) => {
-        return new Promise((resolve) => {
-            const img = new Image();
-            img.src = src;
-            console.log(`Preloading image: ${src}`);
-            img.onload = () => {
-                console.log(`Image loaded successfully: ${src}`);
-                resolve(src);
-            };
-            img.onerror = () => {
-                console.warn(`Image failed to load: ${src}, using fallback.`);
-                resolve(DEFAULT_IMAGE_SRC);
-            };
-            setTimeout(() => resolve(DEFAULT_IMAGE_SRC), 2000);
-        });
-    };
+                    // Preload image with timeout to ensure stability
+                    const preloadImage = (src) => {
+                        return new Promise((resolve) => {
+                            const img = new Image();
+                            img.src = src;
+                            console.log(`Preloading image: ${src}`);
+                            img.onload = () => {
+                                console.log(`Image loaded successfully: ${src}`);
+                                resolve(src);
+                            };
+                            img.onerror = () => {
+                                console.warn(`Image failed to load: ${src}, using fallback.`);
+                                resolve(DEFAULT_IMAGE_SRC);
+                            };
+                            setTimeout(() => resolve(DEFAULT_IMAGE_SRC), 2000);
+                        });
+                    };
 
-    // Prevent redundant updates
-    if (appContainerEl.classList.contains('content-fading-out')) {
-        console.log('Skipping updateDisplay: already fading out');
-        return;
-    }
+                    // Prevent redundant updates
+                    if (appContainerEl.classList.contains('content-fading-out')) {
+                        console.log('Skipping updateDisplay: already fading out');
+                        return;
+                    }
 
-    appContainerEl?.classList.add('content-fading-out');
+                    appContainerEl?.classList.add('content-fading-out');
 
-    setTimeout(async () => {
-        try {
-            // Ensure image container and image are visible
-            mysteryImageContainerEl.style.display = 'block';
-            mysteryImageEl.style.display = 'block';
+                    setTimeout(async () => {
+                        try {
+                            // Ensure image container and image are visible
+                            mysteryImageContainerEl.style.display = 'block';
+                            mysteryImageEl.style.display = 'block';
 
-            if (state.isLitanyMode) {
-                litanyTabsContainerEl?.classList.add('visible');
-                prayerLangEnBtn?.classList.add('hidden');
-                prayerLangLaBtn?.classList.add('hidden');
-                litanyLangEnBtn?.classList.toggle('active', state.litanyLanguage === 'english');
-                litanyLangLaBtn?.classList.toggle('active', state.litanyLanguage === 'latin');
-                bodyEl?.classList.add('theme-litany');
-                mysteryMenuButtons.forEach(btn => btn?.classList.remove('selected-mystery'));
-                headerTitleEl.textContent = 'Litany of Loreto';
-                headerSubtitleEl.textContent = 'Rosary Companion';
-                progressIndicatorTextEl.textContent = 'Litany of Loreto';
-                prayerTextEl.textContent = state.litanyLanguage === 'english' ? litanyOfLoretoText : litanyOfLoretoLatinText;
-                prayerTextEl.classList.add('centered');
+                            if (state.isLitanyMode) {
+                                litanyTabsContainerEl?.classList.add('visible');
+                                prayerLangEnBtn?.classList.add('hidden');
+                                prayerLangLaBtn?.classList.add('hidden');
+                                litanyLangEnBtn?.classList.toggle('active', state.litanyLanguage === 'english');
+                                litanyLangLaBtn?.classList.toggle('active', state.litanyLanguage === 'latin');
+                                bodyEl?.classList.add('theme-litany');
+                                mysteryMenuButtons.forEach(btn => btn?.classList.remove('selected-mystery'));
+                                headerTitleEl.textContent = 'Litany of Loreto';
+                                headerSubtitleEl.textContent = 'Rosary Companion';
+                                progressIndicatorTextEl.textContent = 'Litany of Loreto';
+                                prayerTextEl.textContent = state.litanyLanguage === 'english' ? litanyOfLoretoText : litanyOfLoretoLatinText;
+                                prayerTextEl.classList.add('centered');
 
-                const imageSrc = await preloadImage(LITANY_IMAGE_SRC || DEFAULT_IMAGE_SRC);
-                console.log(`Setting litany image: ${imageSrc}`);
-                mysteryImageEl.src = imageSrc;
-                mysteryImageEl.alt = 'Litany Image';
+                                const imageSrc = await preloadImage(LITANY_IMAGE_SRC || DEFAULT_IMAGE_SRC);
+                                console.log(`Setting litany image: ${imageSrc}`);
+                                mysteryImageEl.src = imageSrc;
+                                mysteryImageEl.alt = 'Litany Image';
 
-                prevBtn.disabled = true;
-                nextBtn.disabled = true;
-                progressInfoEl.textContent = 'Litany of Loreto';
-            } else {
-                litanyTabsContainerEl?.classList.remove('visible');
-                prayerLangEnBtn?.classList.remove('hidden');
-                prayerLangLaBtn?.classList.remove('hidden');
-                prayerLangEnBtn?.classList.toggle('active', state.prayerLanguage === 'english');
-                prayerLangLaBtn?.classList.toggle('active', state.prayerLanguage === 'latin');
-                bodyEl?.classList.remove('theme-litany');
-                bodyEl?.classList.add(`theme-${state.currentMysteryKey}`);
-                mysteryMenuButtons.forEach(btn => {
-                    btn?.classList.toggle('selected-mystery', btn.id === `select-${state.currentMysteryKey}`);
-                });
+                                prevBtn.disabled = true;
+                                nextBtn.disabled = true;
+                                progressInfoEl.textContent = 'Litany of Loreto';
+                            } else {
+                                litanyTabsContainerEl?.classList.remove('visible');
+                                prayerLangEnBtn?.classList.remove('hidden');
+                                prayerLangLaBtn?.classList.remove('hidden');
+                                prayerLangEnBtn?.classList.toggle('active', state.prayerLanguage === 'english');
+                                prayerLangLaBtn?.classList.toggle('active', state.prayerLanguage === 'latin');
+                                bodyEl?.classList.remove('theme-litany');
+                                bodyEl?.classList.add(`theme-${state.currentMysteryKey}`);
+                                mysteryMenuButtons.forEach(btn => {
+                                    btn?.classList.toggle('selected-mystery', btn.id === `select-${state.currentMysteryKey}`);
+                                });
 
-                const mystery = mysteries[state.currentMysteryKey];
-                headerTitleEl.textContent = mystery.title;
-                headerSubtitleEl.textContent = 'Rosary Companion';
+                                const mystery = mysteries[state.currentMysteryKey];
+                                headerTitleEl.textContent = mystery.title;
+                                headerSubtitleEl.textContent = 'Rosary Companion';
 
-                const totalSteps = prayerSequence.length;
-                progressIndicatorTextEl.textContent = `${mystery.title} - Step ${state.currentStep + 1} / ${totalSteps}`;
+                                const totalSteps = prayerSequence.length;
+                                progressIndicatorTextEl.textContent = `${mystery.title} - Step ${state.currentStep + 1} / ${totalSteps}`;
 
-                const step = prayerSequence[state.currentStep] || {};
-                let displayText = '';
-                let imageSrc = DEFAULT_IMAGE_SRC;
+                                const step = prayerSequence[state.currentStep] || {};
+                                let displayText = '';
+                                let imageSrc = DEFAULT_IMAGE_SRC;
 
-                if (step.type === 'mystery') {
-                    displayText = `<span class="mystery-name">${step.index}. ${step.name}</span>\n${step.text}\n\n<span class="scripture-passage">${step.scripture}</span>`;
-                    imageSrc = step.image || DEFAULT_IMAGE_SRC;
-                } else if (step.type === 'prayer') {
-                    displayText = prayers[step.key][state.prayerLanguage];
-                    imageSrc = step.image || DEFAULT_IMAGE_SRC;
+                                if (step.type === 'mystery') {
+                                    displayText = `<span class="mystery-name">${step.index}. ${step.name}</span>\n${step.text}\n\n<span class="scripture-passage">${step.scripture}</span>`;
+                                    imageSrc = step.image || DEFAULT_IMAGE_SRC;
+                                } else if (step.type === 'prayer') {
+                                    displayText = prayers[step.key][state.prayerLanguage];
+                                    imageSrc = step.image || DEFAULT_IMAGE_SRC;
+                                }
+
+                                prayerTextEl.innerHTML = displayText;
+                                prayerTextEl.classList.toggle('centered', step.type !== 'mystery');
+
+                                const resolvedImageSrc = await preloadImage(imageSrc);
+                                console.log(`Setting image: ${resolvedImageSrc} for step ${state.currentStep}`);
+                                mysteryImageEl.src = resolvedImageSrc;
+                                mysteryImageEl.alt = step.name || prayers[step.key]?.english.split('.')[0] || 'Rosary Image';
+
+                                prevBtn.disabled = state.currentStep === 0;
+                                nextBtn.disabled = state.currentStep === prayerSequence.length - 1;
+                                progressInfoEl.textContent = `Step ${state.currentStep + 1} of ${totalSteps}`;
+                            }
+
+                            appContainerEl?.classList.remove('content-fading-out');
+                        } catch (e) {
+                            console.error('Error in updateDisplay:', e);
+                            prayerTextEl.textContent = 'Error: Failed to render content. Please check console.';
+                        }
+                    }, 150);
                 }
-
-                prayerTextEl.innerHTML = displayText;
-                prayerTextEl.classList.toggle('centered', step.type !== 'mystery');
-
-                const resolvedImageSrc = await preloadImage(imageSrc);
-                console.log(`Setting image: ${resolvedImageSrc} for step ${state.currentStep}`);
-                mysteryImageEl.src = resolvedImageSrc;
-                mysteryImageEl.alt = step.name || prayers[step.key]?.english.split('.')[0] || 'Rosary Image';
-
-                prevBtn.disabled = state.currentStep === 0;
-                nextBtn.disabled = state.currentStep === prayerSequence.length - 1;
-                progressInfoEl.textContent = `Step ${state.currentStep + 1} of ${totalSteps}`;
-            }
-
-            appContainerEl?.classList.remove('content-fading-out');
-        } catch (e) {
-            console.error('Error in updateDisplay:', e);
-            prayerTextEl.textContent = 'Error: Failed to render content. Please check console.';
-        }
-    }, 150);
-}
 
                 function initializeApp() {
                     console.log('Initializing app...');
