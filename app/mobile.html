@@ -67,9 +67,9 @@
             position: relative;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-            padding-top: calc(var(--indicator-bar-height) + var(--header-height) + var(--decade-tracker-height));
+            padding-top: calc(var(--indicator-bar-height) + var(--header-height) + var(--decade-tracker-height) + 50px); /* Increased to match tracker */
             padding-bottom: var(--footer-height);
-        }
+            }
         .mystery-indicator-bar {
             position: fixed;
             top: 0; left: 0; right: 0;
@@ -148,7 +148,7 @@
         .menu-toggle-btn:hover { color: var(--text-primary); }
         .decade-progress-tracker {
             position: fixed;
-            top: calc(var(--indicator-bar-height) + var(--header-height));
+            top: calc(var(--indicator-bar-height) + var(--header-height) + 50px); /* Increased to clear language tabs */
             left: 0; right: 0;
             height: var(--decade-tracker-height);
             background-color: var(--bg-surface);
@@ -228,7 +228,7 @@
             transition: all 0.3s ease;
         }
         .mystery-image-container {
-            margin: 0 auto var(--content-gap) auto;
+            margin: 1px auto; /* Reduced top margin to lift image slightly */
             padding: var(--image-padding);
             border: var(--image-border-thickness) solid var(--current-accent-color);
             border-radius: var(--border-radius-md);
@@ -484,6 +484,29 @@
         }
         input:checked + .toggle-switch-label { background-color: var(--current-accent-color); }
         input:checked + .toggle-switch-label:before { transform: translateX(24px); }
+        #language-toggle-controls .toggle-switch-label::after {
+            content: 'EN';
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.7rem;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        #language-toggle-controls input:checked + .toggle-switch-label::after {
+            content: 'LA';
+            left: auto;
+            right: 8px;
+        }
+        #language-label {
+            font-weight: 500;
+            color: var(--text-primary);
+            transition: color 0.3s ease;
+        }
+        #language-label.latin {
+            color: var(--current-accent-color);
+        }
         .menu-overlay {
             position: fixed;
             inset: 0;
@@ -532,12 +555,12 @@
                 </label>
             </li>
             <li id="language-toggle-controls" class="controls-container">
-                <span>Prayer Language:</span>
-                <label class="toggle-switch">
-                    <input type="checkbox" id="language-toggle-checkbox">
-                    <span class="toggle-switch-label"></span>
-                </label>
-            </li>
+    <span id="language-label">English</span>
+    <label class="toggle-switch">
+        <input type="checkbox" id="language-toggle-checkbox">
+        <span class="toggle-switch-label"></span>
+    </label>
+        </li>
             <li><hr style="border-color: var(--border-color); margin: 15px 0;"></li>
             <li><a href="about.html" target="_blank" rel="noopener noreferrer" id="about-btn" title="About this App">About this App</a></li>
             <li><a href="https://x.com/exanxc" target="_blank" rel="noopener noreferrer" id="follow-btn" title="Follow me on X (Twitter)">Follow me on X</a></li>
@@ -1112,28 +1135,32 @@ document.addEventListener('DOMContentLoaded', () => {
         menuOverlayEl.setAttribute('aria-hidden', !isOpen);
     }
 
-    function switchLanguage(lang) {
-        if (lang !== 'en' && lang !== 'la') {
-            console.error(`Invalid language: ${lang}`);
-            return;
-        }
-        currentLang = lang;
-        saveLanguagePreference();
-        fadeContent(() => {
-            if (currentStep === LITANY_MODE_STEP) {
-                prayerSequence = [];
-                updateDisplay();
-            } else {
-                buildPrayerSequence(currentMysteryKey);
-                updateDisplay();
-            }
-        });
-        const langToggleCheckbox = document.getElementById('language-toggle-checkbox');
-        if (langToggleCheckbox) {
-            langToggleCheckbox.checked = lang === 'la';
-        }
+        function switchLanguage(lang) {
+    if (lang !== 'en' && lang !== 'la') {
+        console.error(`Invalid language: ${lang}`);
+        return;
     }
-
+    currentLang = lang;
+    saveLanguagePreference();
+    const languageLabel = document.getElementById('language-label');
+    if (languageLabel) {
+        languageLabel.textContent = lang === 'en' ? 'English' : 'Latin';
+        languageLabel.classList.toggle('latin', lang === 'la');
+    }
+    fadeContent(() => {
+        if (currentStep === LITANY_MODE_STEP) {
+            prayerSequence = [];
+            updateDisplay();
+        } else {
+            buildPrayerSequence(currentMysteryKey);
+            updateDisplay();
+        }
+    });
+    const langToggleCheckbox = document.getElementById('language-toggle-checkbox');
+    if (langToggleCheckbox) {
+        langToggleCheckbox.checked = lang === 'la';
+    }
+}
     function selectMystery(mysteryKey) {
         if (!mysteries[mysteryKey]) {
             console.error(`Invalid mystery key: ${mysteryKey}`);
@@ -1216,36 +1243,39 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function initializeApp() {
-        const savedState = loadAppState();
-        fontSizeStep = loadFontSizeStep();
-        imagesVisible = loadImageVisibility();
-        currentLang = loadLanguagePreference();
-        adjustFontSize('none');
-        if (imageToggleCheckbox) {
-            imageToggleCheckbox.checked = imagesVisible;
-        }
-        const langToggleCheckbox = document.getElementById('language-toggle-checkbox');
-        if (langToggleCheckbox) {
-            langToggleCheckbox.checked = currentLang === 'la';
-        }
-        if (savedState?.mystery && mysteries[savedState.mystery] && savedState.step !== undefined) {
-            currentMysteryKey = savedState.mystery;
-            currentStep = savedState.step;
-            currentLang = savedState.lang || 'en';
-            buildPrayerSequence(currentMysteryKey);
-            updateMysteryTheme();
-            setupDecadeTracker();
-            updateDisplay();
-        } else {
-            currentMysteryKey = getTodaysMysteries();
-            currentStep = 0;
-            buildPrayerSequence(currentMysteryKey);
-            updateMysteryTheme();
-            setupDecadeTracker();
-            updateDisplay();
-        }
+        function initializeApp() {
+    const savedState = loadAppState();
+    fontSizeStep = loadFontSizeStep();
+    imagesVisible = loadImageVisibility();
+    currentLang = loadLanguagePreference();
+    adjustFontSize('none');
+    if (imageToggleCheckbox) {
+        imageToggleCheckbox.checked = imagesVisible;
     }
+    const langToggleCheckbox = document.getElementById('language-toggle-checkbox');
+    const languageLabel = document.getElementById('language-label');
+    if (langToggleCheckbox && languageLabel) {
+        langToggleCheckbox.checked = currentLang === 'la';
+        languageLabel.textContent = currentLang === 'en' ? 'English' : 'Latin';
+        languageLabel.classList.toggle('latin', currentLang === 'la');
+    }
+    if (savedState?.mystery && mysteries[savedState.mystery] && savedState.step !== undefined) {
+        currentMysteryKey = savedState.mystery;
+        currentStep = savedState.step;
+        currentLang = savedState.lang || 'en';
+        buildPrayerSequence(currentMysteryKey);
+        updateMysteryTheme();
+        setupDecadeTracker();
+        updateDisplay();
+    } else {
+        currentMysteryKey = getTodaysMysteries();
+        currentStep = 0;
+        buildPrayerSequence(currentMysteryKey);
+        updateMysteryTheme();
+        setupDecadeTracker();
+        updateDisplay();
+    }
+}
 
     // Event Listeners
     menuToggleBtn?.addEventListener('click', () => toggleMenu());
