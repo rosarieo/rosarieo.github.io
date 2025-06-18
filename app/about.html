@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Rosary Companion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="../fonts.googleapis.com/css2%3Ffamily=Inter:wght@300%3B400%3B600&amp;display=swap.css" rel="stylesheet">
+
+    <style>
+        :root {
+            /* Re-using color palette from the main app */
+            --bg-dark: #1a1a1a;
+            --bg-card: #2c2c2c;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --border-color: #444;
+
+            /* Using a neutral accent color for the about page */
+            --theme-color-about: #a0a0a0; /* Using litany color as neutral */
+            --current-accent-color: var(--theme-color-about);
+
+            --mobile-padding: 15px;
+            --desktop-padding: 25px;
+        }
+
+        /* Basic Reset */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        /* Body Styling */
+        html, body {
+            min-height: 100%; /* Allow content to determine height */
+            height: auto;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: var(--desktop-padding); /* Add some padding around the body */
+        }
+
+        /* Container for the content */
+        .about-container {
+            background-color: var(--bg-card);
+            padding: var(--desktop-padding);
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            max-width: 800px; /* Limit width for readability */
+            margin: 40px auto; /* Center the container with space */
+            border: 1px solid var(--border-color);
+        }
+
+        /* Heading Style */
+        h1 {
+            font-weight: 600;
+            margin-bottom: 20px;
+            font-size: 1.9em;
+            color: var(--current-accent-color); /* Use the accent color */
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+
+        /* Paragraph Style */
+        p {
+            margin-bottom: 15px;
+            color: var(--text-primary);
+            font-size: 1.05rem;
+        }
+
+        /* Link Style */
+        a {
+            color: var(--current-accent-color);
+            text-decoration: none;
+            font-weight: 400;
+            transition: color 0.2s ease, text-decoration 0.2s ease;
+        }
+
+        a:hover,
+        a:focus {
+            color: color-mix(in srgb, var(--current-accent-color) 80%, #fff);
+            text-decoration: underline;
+            outline: none;
+        }
+
+        /* Button-like Link for returning */
+        .back-link {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 10px 20px;
+            background-color: var(--current-accent-color);
+            color: var(--bg-dark);
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            border: 1px solid color-mix(in srgb, var(--current-accent-color) 80%, #000);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        .back-link:hover,
+        .back-link:focus {
+            background-color: color-mix(in srgb, var(--current-accent-color) 85%, #fff);
+            text-decoration: none;
+            transform: translateY(-1px);
+             box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+        }
+         .back-link:active {
+             transform: scale(0.98);
+             box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+         }
+
+        .center-text {
+            text-align: center;
+        }
+
+        /* Responsiveness */
+        @media (max-width: 600px) {
+            body {
+                padding: var(--mobile-padding);
+            }
+            .about-container {
+                padding: var(--mobile-padding);
+                margin: 20px auto; /* Less margin on mobile */
+                border-radius: 8px;
+            }
+            h1 {
+                font-size: 1.6em;
+                margin-bottom: 15px;
+                padding-bottom: 10px;
+            }
+            p {
+                 font-size: 1rem;
+            }
+            .back-link {
+                width: 100%; /* Make button full width */
+                padding: 12px 15px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="about-container">
+        <h1>About the Rosary Companion</h1>
+
+        <p>
+            This web application provides a simple, focused interface to help guide you through praying the Holy Rosary.
+        </p>
+
+         <p>
+            Key features include progress tracking (on desktop/tablet), display of relevant artwork, adjustable font sizes, and a responsive design suitable for both mobile and desktop use.
+        </p>
+         <p>
+             Created by <a href="https://x.com/exanxc" target="_blank" rel="noopener noreferrer">@exanxc</a>.
+         <p>
+             Latin added by <a href="https://x.com/literarysmut" target="_blank" rel="noopener noreferrer">@LiterarySmut</a>.
+         </p>
+         </p>
+
+        <p>
+            May the blessings of the Lord be with you. ♥
+        </p>
+
+        <div class="center-text">
+            <!-- Make sure 'rosary.html' is the correct filename for your main app -->
+            <a href="rosary.html" class="back-link">Back to the Rosary</a>
+        </div>
+
+    </div>
+
+</body>
+</html>

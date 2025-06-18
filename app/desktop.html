@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rosary Companion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-dark: #121212;
+            --bg-surface: #1e1e1e;
+            --bg-menu: #2a2a2a;
+            --bg-overlay: rgba(0, 0, 0, 0.8);
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --border-color: #383838;
+            --indicator-bar-height: 22px;
+            --menu-width: 260px;
+            --header-height: 55px;
+            --footer-height: 60px;
+            --padding-standard: 16px;
+            --padding-tight: 10px;
+            --content-gap: 18px;
+            --border-radius-sm: 6px;
+            --border-radius-md: 10px;
+            --border-radius-lg: 16px;
+            --image-max-width: 240px;
+            --image-border-thickness: 2px;
+            --image-padding: 4px;
+            --theme-color-glorious: #94a88c;
+            --theme-color-joyful: #c78c8c;
+            --theme-color-luminous: #d8c080;
+            --theme-color-sorrowful: #9884a8;
+            --theme-color-litany: #a0a0a0;
+            --current-accent-color: var(--theme-color-glorious);
+            --base-font-size: 1rem;
+            --prayer-font-size: var(--base-font-size);
+            --font-size-step-amount: 0.08rem;
+        }
+
+        body.theme-joyful { --current-accent-color: var(--theme-color-joyful); }
+        body.theme-luminous { --current-accent-color: var(--theme-color-luminous); }
+        body.theme-sorrowful { --current-accent-color: var(--theme-color-sorrowful); }
+        body.theme-glorious { --current-accent-color: var(--theme-color-glorious); }
+        body.theme-litany { --current-accent-color: var(--theme-color-litany); }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        html { font-size: 16px; scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', sans-serif; background-color: var(--bg-dark); color: var(--text-primary);
+            line-height: 1.6; overflow-x: hidden; min-height: 100vh; position: relative;
+            -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+            padding-top: var(--indicator-bar-height);
+        }
+
+        .desktop-wrapper { display: block; }
+
+        .progress-indicator-bar {
+            position: fixed; top: 0; left: 0; right: 0;
+            height: var(--indicator-bar-height); background-color: var(--bg-surface);
+            border-bottom: 1px solid var(--border-color); z-index: 1010;
+            display: flex; align-items: center; justify-content: center;
+            padding: 0 var(--padding-tight); transition: background-color 0.3s ease;
+        }
+        #progress-indicator-text {
+            color: var(--text-secondary); font-size: 0.75rem; font-weight: 500;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+
+        .app-container {
+            display: flex; flex-direction: column;
+            min-height: calc(100vh - var(--indicator-bar-height));
+            padding-top: var(--header-height);
+            padding-bottom: var(--footer-height);
+            opacity: 1; transition: opacity 0.3s ease-in-out;
+        }
+        .app-container.content-fading-out { opacity: 0; }
+
+        .app-header {
+            position: fixed; top: var(--indicator-bar-height); left: 0; right: 0;
+            height: var(--header-height); background-color: var(--bg-surface);
+            border-bottom: 1px solid var(--border-color); z-index: 1000;
+            display: flex; align-items: center; padding: 0 var(--padding-tight);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        .header-title {
+            flex-grow: 1; text-align: center; font-size: 0.95rem; font-weight: 600;
+            color: var(--current-accent-color); white-space: nowrap; overflow: hidden;
+            text-overflow: ellipsis; padding: 0 10px; transition: color 0.3s ease;
+        }
+        .header-subtitle { font-size: 0.75rem; color: var(--text-secondary); display: block; margin-top: -2px; }
+        .menu-toggle-btn {
+            background: none; border: none; color: var(--text-secondary); font-size: 1.8rem;
+            cursor: pointer; padding: 8px; line-height: 1; z-index: 1001;
+            transition: color 0.2s ease; flex-shrink: 0;
+        }
+        .menu-toggle-btn:hover { color: var(--text-primary); }
+        .header-spacer { width: 48px; flex-shrink: 0; }
+
+        .main-content {
+            flex-grow: 1; padding: var(--padding-standard); overflow-y: auto; display: block;
+        }
+
+        .litany-tabs-container, #prayer-lang-tabs {
+            display: none; text-align: center; margin-bottom: var(--content-gap);
+        }
+        .litany-tabs-container.visible, #prayer-lang-tabs.visible { display: block; }
+        .litany-tab-button {
+            background-color: var(--bg-menu); color: var(--text-secondary); border: 1px solid var(--border-color);
+            padding: 7px 15px; margin: 0 4px; border-radius: var(--border-radius-sm); cursor: pointer;
+            font-size: 0.85em; font-weight: 500; transition: all 0.2s ease;
+        }
+        .litany-tab-button:hover { background-color: var(--bg-surface); color: var(--text-primary); }
+        .litany-tab-button.active {
+            background-color: var(--current-accent-color); color: var(--bg-dark); border-color: var(--current-accent-color);
+            font-weight: 600; cursor: default; transition: all 0.3s ease;
+        }
+        #prayer-lang-tabs { display: block; }
+        #prayer-lang-tabs.hidden { display: none; }
+
+.mystery-image-container {
+    display: block !important; /* Force visibility */
+    overflow: hidden;
+    margin: 0 auto var(--content-gap) auto;
+    padding: var(--image-padding);
+    border: var(--image-border-thickness) solid var(--current-accent-color);
+    border-radius: var(--border-radius-md);
+    max-width: var(--image-max-width);
+    min-height: calc(var(--image-max-width) + 2 * var(--image-padding)); /* Ensure container has height */
+    background-color: var(--bg-dark);
+    position: relative;
+    z-index: 1;
+    transition: border-color 0.3s ease;
+}
+
+.mystery-image {
+    display: block !important; /* Force visibility */
+    width: 100%;
+    height: auto;
+    min-height: var(--image-max-width); /* Prevent collapse */
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+    border-radius: var(--border-radius-sm);
+    background-color: var(--bg-dark);
+    transition: opacity 0.2s ease;
+    will-change: opacity;
+}
+
+.prayer-card {
+    background-color: var(--bg-surface);
+    padding: var(--padding-standard);
+    border-radius: var(--border-radius-md);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    min-height: 80px;
+    position: relative;
+    z-index: 0;
+    margin-top: var(--content-gap); /* Default for mobile */
+}
+        #prayer-text {
+            font-size: var(--prayer-font-size); text-align: left; white-space: pre-wrap;
+            line-height: 1.7; transition: opacity 0.15s ease-in-out; color: var(--text-primary);
+        }
+        #prayer-text .announcement-block { margin-bottom: 1em; padding-bottom: 0.8em; border-bottom: 1px solid var(--border-color); }
+        #prayer-text .mystery-name { font-weight: 600; display: block; margin-bottom: 5px; font-size: calc(var(--prayer-font-size) * 1.15); color: var(--current-accent-color); transition: color 0.3s ease; text-align: center; }
+        #prayer-text .scripture-passage { font-style: italic; color: var(--text-secondary); display: block; margin-top: 10px; font-size: calc(var(--prayer-font-size) * 0.9); line-height: 1.6; text-align: left; white-space: pre-wrap; }
+        #prayer-text .instruction-text { display: block; margin-top: 1em; font-size: calc(var(--prayer-font-size) * 0.95); color: var(--text-primary); text-align: center; }
+        #prayer-text.centered { text-align: center; }
+
+        .app-footer {
+            position: fixed; bottom: 0; left: 0; right: 0; height: var(--footer-height);
+            background-color: var(--bg-surface); border-top: 1px solid var(--border-color);
+            z-index: 1000; display: flex; align-items: center; justify-content: space-between;
+            padding: 0 var(--padding-standard); box-shadow: 0 -2px 6px rgba(0,0,0,0.2);
+        }
+        .footer-button {
+            background-color: var(--current-accent-color); color: var(--bg-dark); border: none;
+            border-radius: var(--border-radius-lg); font-size: 1.5rem; font-weight: 700; cursor: pointer;
+            width: 48px; height: 48px; display: flex; justify-content: center; align-items: center;
+            line-height: 1; box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: all 0.2s ease; flex-shrink: 0;
+        }
+        .footer-button:hover:not(:disabled) { background-color: color-mix(in srgb, var(--current-accent-color) 85%, var(--text-primary)); transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.25); }
+        .footer-button:active:not(:disabled) { transform: scale(0.95); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        .footer-button:disabled { background-color: var(--border-color); color: var(--text-secondary); cursor: not-allowed; opacity: 0.6; box-shadow: none; transform: none; }
+        .progress-info {
+            flex-grow: 1; text-align: center; font-size: 0.8rem; color: var(--text-secondary);
+            padding: 0 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .progress-info strong { color: var(--text-primary); font-weight: 500; }
+
+        .side-menu {
+            position: fixed; top: 0; left: 0; bottom: 0; width: var(--menu-width);
+            background-color: var(--bg-menu); padding: 60px 20px 20px;
+            box-shadow: 3px 0 15px rgba(0, 0, 0, 0.4); transform: translateX(-100%);
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1100;
+            border-right: 1px solid var(--border-color); overflow-y: auto;
+            scrollbar-width: thin; scrollbar-color: var(--border-color) var(--bg-menu);
+        }
+        .side-menu::-webkit-scrollbar { width: 6px; }
+        .side-menu::-webkit-scrollbar-track { background: var(--bg-menu); }
+        .side-menu::-webkit-scrollbar-thumb { background-color: var(--border-color); border-radius: 3px; }
+        .side-menu.open { transform: translateX(0); }
+        .side-menu h3 {
+            color: var(--current-accent-color); margin-bottom: 20px; padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color); font-weight: 600;
+            font-size: 1.2em; transition: color 0.3s ease;
+        }
+        .side-menu ul { list-style: none; }
+        .side-menu li { margin-bottom: 8px; }
+        .side-menu button, .side-menu li a {
+            display: block; background: none; border: none; color: var(--text-primary);
+            padding: 12px 10px; text-align: left; width: 100%; font-size: 1em;
+            cursor: pointer; border-radius: var(--border-radius-sm);
+            transition: background-color 0.2s ease, color 0.2s ease;
+            text-decoration: none; box-sizing: border-box; font-weight: 400;
+        }
+        .side-menu button:hover:not(:disabled):not(.selected-mystery), .side-menu li a:hover {
+            background-color: rgba(255, 255, 255, 0.08); color: var(--text-primary);
+            outline: none; text-decoration: none;
+        }
+        .side-menu button:focus-visible:not(:disabled), .side-menu li a:focus-visible {
+            outline: 2px solid var(--current-accent-color); outline-offset: 1px;
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+        .side-menu button.selected-mystery {
+            background-color: var(--current-accent-color); color: var(--bg-dark); font-weight: 600;
+        }
+        .side-menu #font-size-controls {
+            display: flex; justify-content: space-between; align-items: center; padding: 5px 8px;
+        }
+        .side-menu #font-size-controls span { font-size: 0.9em; color: var(--text-secondary); }
+        .side-menu .font-size-btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 1.3em !important; padding: 4px 10px !important; min-width: 40px !important;
+            width: auto !important; text-align: center !important; line-height: 1;
+            background-color: rgba(255,255,255,0.05); border: 1px solid var(--border-color); height: 34px;
+        }
+        .side-menu .font-size-btn:hover:not(:disabled) { background-color: rgba(255, 255, 255, 0.15); }
+        .side-menu .font-size-btn:disabled { opacity: 0.5; cursor: not-allowed; background-color: rgba(255,255,255,0.02); color: var(--text-secondary); }
+
+        .menu-overlay {
+            position: fixed; inset: 0; background-color: var(--bg-overlay); z-index: 1050;
+            opacity: 0; visibility: hidden;
+            transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0.35s;
+        }
+        body.menu-open .menu-overlay {
+            opacity: 1; visibility: visible;
+            transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0s;
+        }
+
+        .hidden { display: none !important; }
+
+/* Desktop layout */
+@media (min-width: 992px) {
+    :root {
+        --base-font-size: 1.05rem;
+        --padding-standard: 20px;
+        --content-gap: 24px;
+        --image-max-width: 320px;
+        --footer-height: 55px;
+    }
+
+    body {
+        padding-top: 0;
+        overflow-y: hidden;
+    }
+
+    .desktop-wrapper {
+        display: flex;
+        height: 100vh;
+    }
+
+    .side-menu {
+        position: relative;
+        transform: translateX(0);
+        flex-shrink: 0;
+        height: 100%;
+        padding-top: var(--indicator-bar-height);
+        box-shadow: 3px 0 10px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+    }
+    .side-menu.open {
+        transform: translateX(0);
+    }
+
+    .menu-toggle-btn, .menu-overlay {
+        display: none;
+    }
+    body.menu-open .menu-overlay {
+        display: none;
+    }
+
+    .app-container {
+        flex-grow: 1;
+        min-height: 100vh;
+        padding-top: calc(var(--indicator-bar-height) + var(--header-height));
+        padding-bottom: var(--footer-height);
+        position: relative;
+        overflow-y: hidden;
+        margin-left: 0;
+        width: calc(100% - var(--menu-width)); /* Ensure full width minus menu */
+    }
+
+    .progress-indicator-bar, .app-header, .app-footer {
+        left: var(--menu-width);
+        width: calc(100% - var(--menu-width));
+        right: auto;
+    }
+    .progress-indicator-bar {
+        z-index: 1011;
+    }
+    .app-header {
+        z-index: 1010;
+        padding: 0 var(--padding-standard);
+    }
+    .app-footer {
+        z-index: 1010;
+    }
+
+    .header-title {
+        text-align: left;
+        padding-left: 0;
+    }
+    .header-spacer {
+        display: none;
+    }
+
+    .main-content {
+        display: flex !important; /* Ensure flexbox */
+        flex-direction: row;
+        gap: var(--content-gap);
+        align-items: flex-start;
+        justify-content: flex-start; /* Left-justify content */
+        height: calc(100vh - var(--indicator-bar-height) - var(--header-height) - var(--footer-height) - 2 * var(--padding-standard));
+        padding: var(--padding-standard);
+        margin: 0; /* Remove centering */
+        width: 100%; /* Full width of app-container */
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: var(--border-color) var(--bg-surface);
+    }
+    .main-content::-webkit-scrollbar {
+        width: 8px;
+    }
+    .main-content::-webkit-scrollbar-track {
+        background: var(--bg-surface);
+    }
+    .main-content::-webkit-scrollbar-thumb {
+        background-color: var(--border-color);
+        border-radius: 4px;
+    }
+
+    .mystery-image-container {
+        flex: 0 0 auto; /* Fixed width, no shrink/grow */
+        max-width: var(--image-max-width);
+        margin: 0 !important; /* Remove margins */
+        margin-top: calc(var(--padding-standard) / 2);
+        position: sticky;
+        top: var(--padding-standard);
+        min-height: calc(var(--image-max-width) + 2 * var(--image-padding));
+    }
+
+    .prayer-card {
+        flex-grow: 1; /* Take remaining space */
+        min-height: 200px;
+        margin-top: 0 !important; /* Align with image */
+    }
+
+    .litany-tabs-container.visible, #prayer-lang-tabs.visible {
+        flex-basis: 100%;
+        order: -1;
+        margin-bottom: var(--content-gap);
+        text-align: left;
+    }
+    .litany-tab-button {
+        margin: 0 6px 0 0;
+    }
+
+    .progress-info {
+        font-size: 0.85rem;
+    }
+}
+    </style>
+</head>
+<body class="theme-glorious">
+    <div class="desktop-wrapper">
+        <nav id="menu" class="side-menu" aria-hidden="false">
+            <h3>Menu</h3>
+            <ul>
+                <li><button id="select-joyful">Joyful Mysteries</button></li>
+                <li><button id="select-luminous">Luminous Mysteries</button></li>
+                <li><button id="select-sorrowful">Sorrowful Mysteries</button></li>
+                <li><button id="select-glorious">Glorious Mysteries</button></li>
+                <li><hr style="border-color: var(--border-color); margin: 15px 0;"></li>
+                <li><button id="show-litany-btn">Litany of Loreto</button></li>
+                <li><hr style="border-color: var(--border-color); margin: 15px 0;"></li>
+                <li><button id="restart-prayer">Restart Current Prayer</button></li>
+                <li><hr style="border-color: var(--border-color); margin: 15px 0;"></li>
+                <li id="font-size-controls">
+                    <span>Font Size:</span>
+                    <div>
+                        <button id="font-size-decrease" class="font-size-btn" title="Decrease Font Size">–</button>
+                        <button id="font-size-increase" class="font-size-btn" title="Increase Font Size">+</button>
+                    </div>
+                </li>
+                <li><hr style="border-color: var(--border-color); margin: 15px 0;"></li>
+                <li><a href="about.html" target="_blank" rel="noopener noreferrer" id="about-btn" title="About this App">About this App</a></li>
+                <li><a href="../rosary.html" target="_blank" id="follow-btn" title="Home">Home</a></li>
+            </ul>
+        </nav>
+
+        <div class="app-container">
+            <div class="progress-indicator-bar" id="progress-indicator-bar">
+                <span id="progress-indicator-text">Loading...</span>
+            </div>
+            <header class="app-header">
+                <button id="menu-toggle-btn" class="menu-toggle-btn" aria-label="Toggle Menu" aria-expanded="false" aria-controls="menu">☰</button>
+                <div class="header-title" id="header-title">
+                    Loading...
+                    <span class="header-subtitle" id="header-subtitle">Rosary Companion</span>
+                </div>
+                <div class="header-spacer"></div>
+            </header>
+
+            <main class="main-content" id="main-content">
+                <div id="prayer-lang-tabs" class="litany-tabs-container">
+                    <button id="prayer-lang-en" class="litany-tab-button active">English</button>
+                    <button id="prayer-lang-la" class="litany-tab-button">Latin</button>
+                </div>
+                <div id="litany-tabs" class="litany-tabs-container">
+                    <button id="litany-lang-en" class="litany-tab-button active">English</button>
+                    <button id="litany-lang-la" class="litany-tab-button">Latin</button>
+                </div>
+                <div class="mystery-image-container" id="mystery-image-container">
+                    <img id="mystery-image" src="images/rosary_intro.jpg" alt="Rosary Image" class="mystery-image">
+                </div>
+                <div class="prayer-card">
+                    <p id="prayer-text">Loading prayer...</p>
+                </div>
+            </main>
+
+            <footer class="app-footer">
+                <button id="prev-btn" class="footer-button" disabled title="Previous Step">←</button>
+                <div class="progress-info" id="progress-info">Initializing...</div>
+                <button id="next-btn" class="footer-button" title="Next Step">→</button>
+            </footer>
+        </div>
+    </div>
+    <div class="menu-overlay" id="menu-overlay" aria-hidden="true"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                // --- DOM Element References ---
+                const progressIndicatorTextEl = document.getElementById('progress-indicator-text');
+                const appContainerEl = document.querySelector('.app-container');
+                const headerTitleEl = document.getElementById('header-title');
+                const headerSubtitleEl = document.getElementById('header-subtitle');
+                const mainContentEl = document.getElementById('main-content');
+                const prayerTextEl = document.getElementById('prayer-text');
+                const mysteryImageEl = document.getElementById('mystery-image');
+                const mysteryImageContainerEl = document.getElementById('mystery-image-container');
+                const prevBtn = document.getElementById('prev-btn');
+                const nextBtn = document.getElementById('next-btn');
+                const progressInfoEl = document.getElementById('progress-info');
+                const appFooterEl = document.querySelector('.app-footer');
+                const menuToggleBtn = document.getElementById('menu-toggle-btn');
+                const menuEl = document.getElementById('menu');
+                const menuOverlayEl = document.getElementById('menu-overlay');
+                const mysteryMenuButtons = [
+                    document.getElementById('select-joyful'), document.getElementById('select-luminous'),
+                    document.getElementById('select-sorrowful'), document.getElementById('select-glorious')
+                ];
+                const restartPrayerBtn = document.getElementById('restart-prayer');
+                const showLitanyBtn = document.getElementById('show-litany-btn');
+                const bodyEl = document.body;
+                const fontSizeIncreaseBtn = document.getElementById('font-size-increase');
+                const fontSizeDecreaseBtn = document.getElementById('font-size-decrease');
+                const litanyTabsContainerEl = document.getElementById('litany-tabs');
+                const litanyLangEnBtn = document.getElementById('litany-lang-en');
+                const litanyLangLaBtn = document.getElementById('litany-lang-la');
+                const prayerLangEnBtn = document.getElementById('prayer-lang-en');
+                const prayerLangLaBtn = document.getElementById('prayer-lang-la');
+
+                // Log missing elements for debugging
+                const missingElements = [];
+                if (!progressIndicatorTextEl) missingElements.push('progress-indicator-text');
+                if (!appContainerEl) missingElements.push('app-container');
+                if (!headerTitleEl) missingElements.push('header-title');
+                if (!headerSubtitleEl) missingElements.push('header-subtitle');
+                if (!mainContentEl) missingElements.push('main-content');
+                if (!prayerTextEl) missingElements.push('prayer-text');
+                if (!mysteryImageEl) missingElements.push('mystery-image');
+                if (!mysteryImageContainerEl) missingElements.push('mystery-image-container');
+                if (!prevBtn) missingElements.push('prev-btn');
+                if (!nextBtn) missingElements.push('next-btn');
+                if (!progressInfoEl) missingElements.push('progress-info');
+                if (!appFooterEl) missingElements.push('app-footer');
+                if (!litanyTabsContainerEl) missingElements.push('litany-tabs');
+                if (!prayerLangEnBtn) missingElements.push('prayer-lang-en');
+                if (!prayerLangLaBtn) missingElements.push('prayer-lang-la');
+                if (missingElements.length > 0) {
+                    console.error('Missing DOM elements:', missingElements.join(', '));
+                    if (prayerTextEl) prayerTextEl.textContent = 'Error: Missing required elements. Please check console for details.';
+                    return;
+                }
+
+                // --- Constants ---
+                const INTRO_IMAGE_SRC = 'images/rosary_intro.jpg';
+                const CONCLUSION_IMAGE_SRC = 'images/rosary_conclusion.jpg';
+                const LITANY_IMAGE_SRC = 'images/litany.jpg';
+                const DEFAULT_IMAGE_SRC = 'https://via.placeholder.com/240';
+                const FONT_SIZE_STEP = 0.08;
+                const MIN_FONT_SIZE = 0.8;
+                const MAX_FONT_SIZE = 1.6;
+
+                // --- State ---
+                let state = {
+                    currentMysteryKey: null,
+                    currentStep: 0,
+                    isLitanyMode: false,
+                    prayerLanguage: 'english',
+                    litanyLanguage: 'english',
+                    fontSize: 1.0
+                };
+                let prayerSequence = [];
+
+                // --- Prayer Data ---
+                const prayers = {
+                    sign_of_cross: {
+                        english: "In the name of the Father, and of the Son, and of the Holy Spirit. Amen.",
+                        latin: "In nomine Patris, et Filii, et Spiritus Sancti. Amen."
+                    },
+                    apostles_creed: {
+                        english: "I believe in God, the Father almighty, Creator of heaven and earth, and in Jesus Christ, His only Son, our Lord, who was conceived by the Holy Spirit, born of the Virgin Mary, suffered under Pontius Pilate, was crucified, died and was buried; He descended into hell; on the third day He rose again from the dead; He ascended into heaven, and is seated at the right hand of God the Father almighty; from there He will come to judge the living and the dead. I believe in the Holy Spirit, the holy catholic Church, the communion of saints, the forgiveness of sins, the resurrection of the body, and life everlasting. Amen.",
+                        latin: "Credo in Deum, Patrem omnipotentem, Creatorem caeli et terrae; et in Iesum Christum, Filium eius unicum, Dominum nostrum, qui conceptus est de Spiritu Sancto, natus ex Maria Virgine, passus sub Pontio Pilato, crucifixus, mortuus, et sepultus; descendit ad inferos; tertia die resurrexit a mortuis; ascendit ad caelos, sedet ad dexteram Dei Patris omnipotentis; inde venturus est iudicare vivos et mortuos. Credo in Spiritum Sanctum, sanctam Ecclesiam catholicam, sanctorum communionem, remissionem peccatorum, carnis resurrectionem, vitam aeternam. Amen."
+                    },
+                    our_father: {
+                        english: "Our Father, who art in heaven, hallowed be Thy name; Thy kingdom come; Thy will be done on earth as it is in heaven. Give us this day our daily bread; and forgive us our trespasses as we forgive those who trespass against us; and lead us not into temptation, but deliver us from evil. Amen.",
+                        latin: "Pater noster, qui es in caelis, sanctificetur nomen tuum; adveniat regnum tuum; fiat voluntas tua, sicut in caelo et in terra. Panem nostrum quotidianum da nobis hodie; et dimitte nobis debita nostra, sicut et nos dimittimus debitoribus nostris; et ne nos inducas in tentationem, sed libera nos a malo. Amen."
+                    },
+                    hail_mary: {
+                        english: "Hail Mary, full of grace. The Lord is with thee. Blessed art thou amongst women, and blessed is the fruit of thy womb, Jesus. Holy Mary, Mother of God, pray for us sinners, now and at the hour of our death. Amen.",
+                        latin: "Ave Maria, gratia plena, Dominus tecum. Benedicta tu in mulieribus, et benedictus fructus ventris tui, Iesus. Sancta Maria, Mater Dei, ora pro nobis peccatoribus, nunc et in hora mortis nostrae. Amen."
+                    },
+                    glory_be: {
+                        english: "Glory be to the Father, and to the Son, and to the Holy Spirit, as it was in the beginning, is now, and ever shall be, world without end. Amen.",
+                        latin: "Gloria Patri, et Filio, et Spiritui Sancto, sicut erat in principio, et nunc, et semper, et in saecula saeculorum. Amen."
+                    },
+                    fatima_prayer: {
+                        english: "O my Jesus, forgive us our sins, save us from the fires of hell, lead all souls to Heaven, especially those most in need of Thy mercy. Amen.",
+                        latin: "Domine Iesu, dimitte nobis debita nostra, salva nos ab igne inferiori, perduc in caelum omnes animas, praesertim eas, quae misericordiae tuae maxime indigent. Amen."
+                    },
+                    hail_holy_queen: {
+                        english: "Hail, holy Queen, Mother of mercy, our life, our sweetness and our hope. To thee do we cry, poor banished children of Eve: to thee do we send up our sighs, mourning and weeping in this vale of tears. Turn then, most gracious Advocate, thine eyes of mercy toward us, and after this our exile, show unto us the blessed fruit of thy womb, Jesus. O clement, O loving, O sweet Virgin Mary! Pray for us, O holy Mother of God. That we may be made worthy of the promises of Christ.",
+                        latin: "Salve, Regina, Mater misericordiae, vita, dulcedo, et spes nostra, salve. Ad te clamamus, exsules filii Hevae; ad te suspiramus, gementes et flentes in hac lacrimarum valle. Eia ergo, advocata nostra, illos tuos misericordes oculos ad nos converte, et Iesum, benedictum fructum ventris tui, nobis post hoc exsilium ostende. O clemens, O pia, O dulcis Virgo Maria."
+                    },
+                    rosary_prayer: {
+                        english: "Let us pray. O God, whose only begotten Son, by His life, death, and resurrection, has purchased for us the rewards of eternal life, grant, we beseech Thee, that meditating upon these mysteries of the Most Holy Rosary of the Blessed Virgin Mary, we may imitate what they contain and obtain what they promise, through the same Christ Our Lord. Amen.",
+                        latin: "Oremus. Deus, cuius Unigenitus per vitam, mortem et resurrectionem suam nobis salutis aeternae praemia comparavit, concede, quaesumus, ut haec mysteria sacratissimo beatae Mariae Virginis Rosario recolentes, et imitemur quod continent, et quod promittunt assequamur. Per eundem Christum Dominum nostrum. Amen."
+                    }
+                };
+
+                const litanyOfLoretoText = `Lord have mercy.\nChrist have mercy.\nLord have mercy.\nChrist hear us.\nChrist graciously hear us.\n\nGod, the Father of heaven,\nhave mercy on us.\n\nGod the Son, Redeemer of the world,\nGod the Holy Spirit,\nHoly Trinity, one God,\n\nHoly Mary,\npray for us.\nHoly Mother of God,\nHoly Virgin of virgins,\nMother of Christ,\nMother of the Church,\nMother of Mercy,\nMother of divine grace,\nMother of Hope,\nMother most pure,\nMother most chaste,\nMother inviolate,\nMother undefiled,\nMother most amiable,\nMother admirable,\nMother of good counsel,\nMother of our Creator,\nMother of our Saviour,\nVirgin most prudent,\nVirgin most venerable,\nVirgin most renowned,\nVirgin most powerful,\nVirgin most merciful,\nVirgin most faithful,\nMirror of justice,\nSeat of wisdom,\nCause of our joy,\nSpiritual vessel,\nVessel of honour,\nSingular vessel of devotion,\nMystical rose,\nTower of David,\nTower of ivory,\nHouse of gold,\nArk of the covenant,\nGate of heaven,\nMorning star,\nHealth of the sick,\nRefuge of sinners,\nSolace of Migrants,\nComfort of the afflicted,\nHelp of Christians,\nQueen of Angels,\nQueen of Patriarchs,\nQueen of Prophets,\nQueen of Apostles,\nQueen of Martyrs,\nQueen of Confessors,\nQueen of Virgins,\nQueen of all Saints,\nQueen conceived without original sin,\nQueen assumed into heaven,\nQueen of the most holy Rosary,\nQueen of families,\nQueen of peace.\n\nLamb of God, who takes away the sins of the world,\nspare us, O Lord.\n\nLamb of God, who takes away the sins of the world,\ngraciously hear us, O Lord.\n\nLamb of God, who takes away the sins of the world,\nhave mercy on us.\n\nPray for us, O holy Mother of God.\nThat we may be made worthy of the promises of Christ.\n\nLet us pray.\nGrant, we beseech thee,\nO Lord God,\nthat we, your servants,\nmay enjoy perpetual health of mind and body;\nand by the glorious intercession of the Blessed Mary, ever Virgin,\nmay be delivered from present sorrow,\nand obtain eternal joy.\nThrough Christ our Lord.\nAmen.`;
+
+                const litanyOfLoretoLatinText = `Kyrie, eleison.\nChriste, eleison.\nKyrie, eleison.\nChriste, audi nos.\nChriste, exaudi nos.\nPater de caelis, Deus, miserere nobis.\nFili, Redemptor mundi, Deus, miserere nobis.\nSpiritus Sancte, Deus, miserere nobis.\nSancta Trinitas, unus Deus, miserere nobis.\nSancta Maria, ora pro nobis.\nSancta Dei Genitrix, ora pro nobis.\nSancta Virgo virginum, ora pro nobis.\nMater Christi, ora pro nobis.\nMater Ecclesiae, ora pro nobis.\nMater misericordiae, ora pro nobis.\nMater divinae gratiae, ora pro nobis.\nMater spei, ora pro nobis.\nMater purissima, ora pro nobis.\nMater castissima, ora pro nobis.\nMater inviolata, ora pro nobis.\nMater intemerata, ora pro nobis.\nMater amabilis, ora pro nobis.\nMater admirabilis, ora pro nobis.\nMater boni consilii, ora pro nobis.\nMater Creatoris, ora pro nobis.\nMater Salvatoris, ora pro nobis.\nVirgo prudentissima, ora pro nobis.\nVirgo veneranda, ora pro nobis.\nVirgo praedicanda, ora pro nobis.\nVirgo potens, ora pro nobis.\nVirgo clemens, ora pro nobis.\nVirgo fidelis, ora pro nobis.\nSpeculum iustitiae, ora pro nobis.\nSedes sapientiae, ora pro nobis.\nCausa nostrae laetitiae, ora pro nobis.\nVas spirituale, ora pro nobis.\nVas honorabile, ora pro nobis.\nVas insigne devotionis, ora pro nobis.\nRosa mystica, ora pro nobis.\nTurris Davidica, ora pro nobis.\nTurris eburnea, ora pro nobis.\nDomus aurea, ora pro nobis.\nFoederis arca, ora pro nobis.\nIanua caeli, ora pro nobis.\nStella matutina, ora pro nobis.\nSalus infirmorum, ora pro nobis.\nRefugium peccatorum, ora pro nobis.\nSolacium migrantium, ora pro nobis.\nConsolatrix afflictorum, ora pro nobis.\nAuxilium Christianorum, ora pro nobis.\nRegina Angelorum, ora pro nobis.\nRegina Patriarcharum, ora pro nobis.\nRegina Prophetarum, ora pro nobis.\nRegina Apostolorum, ora pro nobis.\nRegina Martyrum, ora pro nobis.\nRegina Confessorum, ora pro nobis.\nRegina Virginum, ora pro nobis.\nRegina Sanctorum omnium, ora pro nobis.\nRegina sine labe originali concepta, ora pro nobis.\nRegina in caelum assumpta, ora pro nobis.\nRegina sacratissimi Rosarii, ora pro nobis.\nRegina familiae, ora pro nobis.\nRegina pacis, ora pro nobis.\nAgnus Dei, qui tollis peccata mundi, parce nobis, Domine.\nAgnus Dei, qui tollis peccata mundi, exaudi nos, Domine.\nAgnus Dei, qui tollis peccata mundi, miserere nobis.\nOra pro nobis, Sancta Dei Genitrix.\nUt digni efficiamur promissionibus Christi.\nOremus.\nConcede, quaesumus, Domine Deus, ut nos famuli tui perpetua mentis et corporis sanitate gaudere mereamur; et gloriosa beatae Mariae semper Virginis intercessione, a praesenti liberemur tristitia, et aeterna perfruamur laetitia. Per Christum Dominum nostrum. Amen.`;
+
+                const mysteries = {
+                    joyful: {
+                        title: 'Joyful Mysteries',
+                        days: [1, 6],
+                        mysteries: [
+                            {
+                                name: 'The Annunciation',
+                                scripture: 'Luke 1:26-38',
+                                text: 'The angel Gabriel announces to Mary that she will conceive Jesus.',
+                                image: 'images/annunciation.jpg'
+                            },
+                            {
+                                name: 'The Visitation',
+                                scripture: 'Luke 1:39-56',
+                                text: 'Mary visits her cousin Elizabeth, who is pregnant with John the Baptist.',
+                                image: 'images/visitation.jpg'
+                            },
+                            {
+                                name: 'The Nativity',
+                                scripture: 'Luke 2:1-20',
+                                text: 'Jesus is born in Bethlehem.',
+                                image: 'images/nativity.jpg'
+                            },
+                            {
+                                name: 'The Presentation',
+                                scripture: 'Luke 2:22-38',
+                                text: 'Mary and Joseph present Jesus in the Temple.',
+                                image: 'images/presentation.jpg'
+                            },
+                            {
+                                name: 'The Finding in the Temple',
+                                scripture: 'Luke 2:41-52',
+                                text: 'Mary and Joseph find Jesus teaching in the Temple.',
+                                image: 'images/finding.jpg'
+                            }
+                        ]
+                    },
+                    luminous: {
+                        title: 'Luminous Mysteries',
+                        days: [4],
+                        mysteries: [
+                            {
+                                name: 'The Baptism of Jesus',
+                                scripture: 'Matthew 3:13-17',
+                                text: 'Jesus is baptized by John in the Jordan River.',
+                                image: 'images/baptism.jpg'
+                            },
+                            {
+                                name: 'The Wedding at Cana',
+                                scripture: 'John 2:1-11',
+                                text: 'Jesus performs His first miracle, turning water into wine.',
+                                image: 'images/cana.jpg'
+                            },
+                            {
+                                name: 'The Proclamation of the Kingdom',
+                                scripture: 'Mark 1:14-15',
+                                text: 'Jesus announces the Kingdom of God and calls for repentance.',
+                                image: 'images/proclamation.jpg'
+                            },
+                            {
+                                name: 'The Transfiguration',
+                                scripture: 'Luke 9:28-36',
+                                text: 'Jesus is transfigured and speaks with Moses and Elijah.',
+                                image: 'images/transfiguration.jpg'
+                            },
+                            {
+                                name: 'The Institution of the Eucharist',
+                                scripture: 'Luke 22:14-20',
+                                text: 'Jesus institutes the Eucharist at the Last Supper.',
+                                image: 'images/eucharist.jpg'
+                            }
+                        ]
+                    },
+                    sorrowful: {
+                        title: 'Sorrowful Mysteries',
+                        days: [2, 5],
+                        mysteries: [
+                            {
+                                name: 'The Agony in the Garden',
+                                scripture: 'Luke 22:39-46',
+                                text: 'Jesus prays in Gethsemane and sweats blood.',
+                                image: 'images/agony.jpg'
+                            },
+                            {
+                                name: 'The Scourging at the Pillar',
+                                scripture: 'John 19:1',
+                                text: 'Jesus is scourged at the pillar.',
+                                image: 'images/scourging.jpg'
+                            },
+                            {
+                                name: 'The Crowning with Thorns',
+                                scripture: 'Matthew 27:27-31',
+                                text: 'Jesus is crowned with thorns and mocked.',
+                                image: 'images/crowning.jpg'
+                            },
+                            {
+                                name: 'The Carrying of the Cross',
+                                scripture: 'John 19:16-17',
+                                text: 'Jesus carries His cross to Calvary.',
+                                image: 'images/carrying.jpg'
+                            },
+                            {
+                                name: 'The Crucifixion',
+                                scripture: 'Luke 23:33-46',
+                                text: 'Jesus is crucified and dies on the cross.',
+                                image: 'images/crucifixion.jpg'
+                            }
+                        ]
+                    },
+                    glorious: {
+                        title: 'Glorious Mysteries',
+                        days: [0, 3],
+                        mysteries: [
+                            {
+                                name: 'The Resurrection',
+                                scripture: 'John 20:1-29',
+                                text: 'Jesus rises from the dead on the third day.',
+                                image: 'images/resurrection.jpg'
+                            },
+                            {
+                                name: 'The Ascension',
+                                scripture: 'Acts 1:6-11',
+                                text: 'Jesus ascends into Heaven forty days after the Resurrection.',
+                                image: 'images/ascension.jpg'
+                            },
+                            {
+                                name: 'The Descent of the Holy Spirit',
+                                scripture: 'Acts 2:1-4',
+                                text: 'The Holy Spirit descends upon the Apostles at Pentecost.',
+                                image: 'images/pentecost.jpg'
+                            },
+                            {
+                                name: 'The Assumption',
+                                scripture: 'No direct reference',
+                                text: 'Mary is assumed body and soul into Heaven.',
+                                image: 'images/assumption.jpg'
+                            },
+                            {
+                                name: 'The Coronation',
+                                scripture: 'Revelation 12:1',
+                                text: 'Mary is crowned Queen of Heaven and Earth.',
+                                image: 'images/coronation.jpg'
+                            }
+                        ]
+                    }
+                };
+
+                // --- Utility Functions ---
+                function getTodaysMysteries() {
+                    const today = new Date().getDay();
+                    if ([1, 6].includes(today)) return 'joyful';
+                    if (today === 4) return 'luminous';
+                    if ([2, 5].includes(today)) return 'sorrowful';
+                    return 'glorious';
+                }
+
+                function saveStateToLocalStorage() {
+                    try {
+                        localStorage.setItem('rosaryCompanionState', JSON.stringify(state));
+                    } catch (e) {
+                        console.error('Failed to save state:', e);
+                    }
+                }
+
+                function loadStateFromLocalStorage() {
+                    try {
+                        const savedState = localStorage.getItem('rosaryCompanionState');
+                        if (savedState) {
+                            const parsed = JSON.parse(savedState);
+                            if (parsed.currentMysteryKey in mysteries || parsed.isLitanyMode) {
+                                state = { ...state, ...parsed };
+                            } else {
+                                console.warn('Invalid mystery key in saved state, resetting.');
+                                state.currentMysteryKey = getTodaysMysteries();
+                            }
+                        }
+                    } catch (e) {
+                        console.error('Failed to load state:', e);
+                    }
+                }
+
+                function buildPrayerSequence(mysteryKey) {
+                    const sequence = [];
+                    const mystery = mysteries[mysteryKey];
+
+                    sequence.push({ type: 'prayer', key: 'sign_of_cross', image: INTRO_IMAGE_SRC });
+                    sequence.push({ type: 'prayer', key: 'apostles_creed', image: INTRO_IMAGE_SRC });
+                    sequence.push({ type: 'prayer', key: 'our_father', image: INTRO_IMAGE_SRC });
+                    for (let i = 0; i < 3; i++) {
+                        sequence.push({ type: 'prayer', key: 'hail_mary', image: INTRO_IMAGE_SRC });
+                    }
+                    sequence.push({ type: 'prayer', key: 'glory_be', image: INTRO_IMAGE_SRC });
+
+                    mystery.mysteries.forEach((m, index) => {
+                        sequence.push({
+                            type: 'mystery',
+                            index: index + 1,
+                            name: m.name,
+                            scripture: m.scripture,
+                            text: m.text,
+                            image: m.image || DEFAULT_IMAGE_SRC
+                        });
+                        sequence.push({ type: 'prayer', key: 'our_father', image: m.image || DEFAULT_IMAGE_SRC });
+                        for (let i = 0; i < 10; i++) {
+                            sequence.push({ type: 'prayer', key: 'hail_mary', image: m.image || DEFAULT_IMAGE_SRC });
+                        }
+                        sequence.push({ type: 'prayer', key: 'glory_be', image: m.image || DEFAULT_IMAGE_SRC });
+                        sequence.push({ type: 'prayer', key: 'fatima_prayer', image: m.image || DEFAULT_IMAGE_SRC });
+                    });
+
+                    sequence.push({ type: 'prayer', key: 'hail_holy_queen', image: CONCLUSION_IMAGE_SRC });
+                    sequence.push({ type: 'prayer', key: 'rosary_prayer', image: CONCLUSION_IMAGE_SRC });
+                    sequence.push({ type: 'prayer', key: 'sign_of_cross', image: CONCLUSION_IMAGE_SRC });
+
+                    return sequence;
+                }
+
+function updateDisplay() {
+    console.log('updateDisplay called with state:', state);
+
+    if (!prayerTextEl || !mysteryImageEl || !mysteryImageContainerEl) {
+        console.error('CRITICAL: Essential elements missing!', { prayerTextEl, mysteryImageEl, mysteryImageContainerEl });
+        if (prayerTextEl) prayerTextEl.textContent = 'Error: Missing required elements.';
+        return;
+    }
+
+    // Preload image with timeout to ensure stability
+    const preloadImage = (src) => {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.src = src;
+            console.log(`Preloading image: ${src}`);
+            img.onload = () => {
+                console.log(`Image loaded successfully: ${src}`);
+                resolve(src);
+            };
+            img.onerror = () => {
+                console.warn(`Image failed to load: ${src}, using fallback.`);
+                resolve(DEFAULT_IMAGE_SRC);
+            };
+            setTimeout(() => resolve(DEFAULT_IMAGE_SRC), 2000);
+        });
+    };
+
+    // Prevent redundant updates
+    if (appContainerEl.classList.contains('content-fading-out')) {
+        console.log('Skipping updateDisplay: already fading out');
+        return;
+    }
+
+    appContainerEl?.classList.add('content-fading-out');
+
+    setTimeout(async () => {
+        try {
+            // Ensure image container and image are visible
+            mysteryImageContainerEl.style.display = 'block';
+            mysteryImageEl.style.display = 'block';
+
+            if (state.isLitanyMode) {
+                litanyTabsContainerEl?.classList.add('visible');
+                prayerLangEnBtn?.classList.add('hidden');
+                prayerLangLaBtn?.classList.add('hidden');
+                litanyLangEnBtn?.classList.toggle('active', state.litanyLanguage === 'english');
+                litanyLangLaBtn?.classList.toggle('active', state.litanyLanguage === 'latin');
+                bodyEl?.classList.add('theme-litany');
+                mysteryMenuButtons.forEach(btn => btn?.classList.remove('selected-mystery'));
+                headerTitleEl.textContent = 'Litany of Loreto';
+                headerSubtitleEl.textContent = 'Rosary Companion';
+                progressIndicatorTextEl.textContent = 'Litany of Loreto';
+                prayerTextEl.textContent = state.litanyLanguage === 'english' ? litanyOfLoretoText : litanyOfLoretoLatinText;
+                prayerTextEl.classList.add('centered');
+
+                const imageSrc = await preloadImage(LITANY_IMAGE_SRC || DEFAULT_IMAGE_SRC);
+                console.log(`Setting litany image: ${imageSrc}`);
+                mysteryImageEl.src = imageSrc;
+                mysteryImageEl.alt = 'Litany Image';
+
+                prevBtn.disabled = true;
+                nextBtn.disabled = true;
+                progressInfoEl.textContent = 'Litany of Loreto';
+            } else {
+                litanyTabsContainerEl?.classList.remove('visible');
+                prayerLangEnBtn?.classList.remove('hidden');
+                prayerLangLaBtn?.classList.remove('hidden');
+                prayerLangEnBtn?.classList.toggle('active', state.prayerLanguage === 'english');
+                prayerLangLaBtn?.classList.toggle('active', state.prayerLanguage === 'latin');
+                bodyEl?.classList.remove('theme-litany');
+                bodyEl?.classList.add(`theme-${state.currentMysteryKey}`);
+                mysteryMenuButtons.forEach(btn => {
+                    btn?.classList.toggle('selected-mystery', btn.id === `select-${state.currentMysteryKey}`);
+                });
+
+                const mystery = mysteries[state.currentMysteryKey];
+                headerTitleEl.textContent = mystery.title;
+                headerSubtitleEl.textContent = 'Rosary Companion';
+
+                const totalSteps = prayerSequence.length;
+                progressIndicatorTextEl.textContent = `${mystery.title} - Step ${state.currentStep + 1} / ${totalSteps}`;
+
+                const step = prayerSequence[state.currentStep] || {};
+                let displayText = '';
+                let imageSrc = DEFAULT_IMAGE_SRC;
+
+                if (step.type === 'mystery') {
+                    displayText = `<span class="mystery-name">${step.index}. ${step.name}</span>\n${step.text}\n\n<span class="scripture-passage">${step.scripture}</span>`;
+                    imageSrc = step.image || DEFAULT_IMAGE_SRC;
+                } else if (step.type === 'prayer') {
+                    displayText = prayers[step.key][state.prayerLanguage];
+                    imageSrc = step.image || DEFAULT_IMAGE_SRC;
+                }
+
+                prayerTextEl.innerHTML = displayText;
+                prayerTextEl.classList.toggle('centered', step.type !== 'mystery');
+
+                const resolvedImageSrc = await preloadImage(imageSrc);
+                console.log(`Setting image: ${resolvedImageSrc} for step ${state.currentStep}`);
+                mysteryImageEl.src = resolvedImageSrc;
+                mysteryImageEl.alt = step.name || prayers[step.key]?.english.split('.')[0] || 'Rosary Image';
+
+                prevBtn.disabled = state.currentStep === 0;
+                nextBtn.disabled = state.currentStep === prayerSequence.length - 1;
+                progressInfoEl.textContent = `Step ${state.currentStep + 1} of ${totalSteps}`;
+            }
+
+            appContainerEl?.classList.remove('content-fading-out');
+        } catch (e) {
+            console.error('Error in updateDisplay:', e);
+            prayerTextEl.textContent = 'Error: Failed to render content. Please check console.';
+        }
+    }, 150);
+}
+
+                function initializeApp() {
+                    console.log('Initializing app...');
+                    loadStateFromLocalStorage();
+
+                    if (!state.currentMysteryKey || !(state.currentMysteryKey in mysteries)) {
+                        state.currentMysteryKey = getTodaysMysteries();
+                        state.currentStep = 0;
+                        state.isLitanyMode = false;
+                    }
+
+                    if (!state.isLitanyMode) {
+                        prayerSequence = buildPrayerSequence(state.currentMysteryKey);
+                        if (state.currentStep >= prayerSequence.length) {
+                            state.currentStep = 0;
+                        }
+                    }
+
+                    prayerTextEl.style.fontSize = `${state.fontSize}rem`;
+                    saveStateToLocalStorage();
+                    updateDisplay();
+                }
+
+                // --- Event Listeners ---
+                menuToggleBtn?.addEventListener('click', () => {
+                    const isOpen = menuEl?.classList.toggle('open');
+                    bodyEl?.classList.toggle('menu-open', isOpen);
+                    menuToggleBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+                });
+
+                menuOverlayEl?.addEventListener('click', () => {
+                    menuEl?.classList.remove('open');
+                    bodyEl?.classList.remove('menu-open');
+                    menuToggleBtn?.setAttribute('aria-expanded', 'false');
+                });
+
+                mysteryMenuButtons.forEach(btn => {
+                    btn?.addEventListener('click', () => {
+                        const mysteryKey = btn.id.replace('select-', '');
+                        if (mysteryKey !== state.currentMysteryKey) {
+                            state.currentMysteryKey = mysteryKey;
+                            state.currentStep = 0;
+                            state.isLitanyMode = false;
+                            prayerSequence = buildPrayerSequence(mysteryKey);
+                            saveStateToLocalStorage();
+                            updateDisplay();
+                        }
+                        menuEl?.classList.remove('open');
+                        bodyEl?.classList.remove('menu-open');
+                        menuToggleBtn?.setAttribute('aria-expanded', 'false');
+                    });
+                });
+
+                showLitanyBtn?.addEventListener('click', () => {
+                    state.isLitanyMode = true;
+                    state.currentStep = 0;
+                    saveStateToLocalStorage();
+                    updateDisplay();
+                    menuEl?.classList.remove('open');
+                    bodyEl?.classList.remove('menu-open');
+                    menuToggleBtn?.setAttribute('aria-expanded', 'false');
+                });
+
+                restartPrayerBtn?.addEventListener('click', () => {
+                    state.currentStep = 0;
+                    if (!state.isLitanyMode) {
+                        prayerSequence = buildPrayerSequence(state.currentMysteryKey);
+                    }
+                    saveStateToLocalStorage();
+                    updateDisplay();
+                    menuEl?.classList.remove('open');
+                    bodyEl?.classList.remove('menu-open');
+                    menuToggleBtn?.setAttribute('aria-expanded', 'false');
+                });
+
+                prevBtn?.addEventListener('click', () => {
+                    if (state.currentStep > 0) {
+                        state.currentStep--;
+                        saveStateToLocalStorage();
+                        updateDisplay();
+                    }
+                });
+
+                nextBtn?.addEventListener('click', () => {
+                    if (state.currentStep < prayerSequence.length - 1 || state.isLitanyMode) {
+                        state.currentStep++;
+                        saveStateToLocalStorage();
+                        updateDisplay();
+                    }
+                });
+
+                prayerLangEnBtn?.addEventListener('click', () => {
+                    state.prayerLanguage = 'english';
+                    saveStateToLocalStorage();
+                    updateDisplay();
+                });
+
+                prayerLangLaBtn?.addEventListener('click', () => {
+                    state.prayerLanguage = 'latin';
+                    saveStateToLocalStorage();
+                    updateDisplay();
+                });
+
+                litanyLangEnBtn?.addEventListener('click', () => {
+                    state.litanyLanguage = 'english';
+                    saveStateToLocalStorage();
+                    updateDisplay();
+                });
+
+                litanyLangLaBtn?.addEventListener('click', () => {
+                    state.litanyLanguage = 'latin';
+                    saveStateToLocalStorage();
+                    updateDisplay();
+                });
+
+                fontSizeIncreaseBtn?.addEventListener('click', () => {
+                    if (state.fontSize < MAX_FONT_SIZE) {
+                        state.fontSize = Math.min(state.fontSize + FONT_SIZE_STEP, MAX_FONT_SIZE);
+                        prayerTextEl.style.fontSize = `${state.fontSize}rem`;
+                        saveStateToLocalStorage();
+                    }
+                });
+
+                fontSizeDecreaseBtn?.addEventListener('click', () => {
+                    if (state.fontSize > MIN_FONT_SIZE) {
+                        state.fontSize = Math.max(state.fontSize - FONT_SIZE_STEP, MIN_FONT_SIZE);
+                        prayerTextEl.style.fontSize = `${state.fontSize}rem`;
+                        saveStateToLocalStorage();
+                    }
+                });
+
+                // --- Start App ---
+                initializeApp();
+            } catch (e) {
+                console.error('Error during initialization:', e);
+                document.getElementById('prayer-text').textContent = 'Error: App failed to initialize. Please check console for details.';
+            }
+        });
+    </script>
+</body>
+</html>

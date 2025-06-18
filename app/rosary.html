@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading Rosary Companion...</title>
+    <style>
+        /* Basic styling for the loading message */
+        body {
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #121212; /* Match app background */
+            color: #e0e0e0; /* Match app text color */
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .loader {
+            font-size: 1.2em;
+        }
+         /* Optional: Add a simple spinner */
+         .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #e0e0e0;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px auto; /* Center spinner above text */
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="loader">
+        <div class="spinner"></div>
+        Loading Rosary Companion...
+    </div>
+
+    <script>
+        (function() {
+            // Define the breakpoint (should match the CSS media query)
+            const desktopBreakpoint = 992; // pixels
+
+            // Get the current window width
+            const screenWidth = window.innerWidth;
+
+            // Get the current URL's search parameters (e.g., ?mystery=joyful)
+            const queryString = window.location.search;
+
+            // Determine the target URL
+            let targetUrl;
+
+            if (screenWidth >= desktopBreakpoint) {
+                targetUrl = 'desktop.html';
+                console.log('Redirecting to Desktop version...');
+            } else {
+                targetUrl = 'mobile.html';
+                console.log('Redirecting to Mobile version...');
+            }
+
+            // Append the original query string (if any) to the target URL
+            targetUrl += queryString;
+
+            // Redirect using replace() so the loader page isn't in history
+            window.location.replace(targetUrl);
+
+            // No further code needed here, redirection will happen.
+        })();
+    </script>
+
+</body>
+</html>
