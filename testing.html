@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Holy Rosary - Mobile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 10px;
+        }
+        .header {
+            text-align: center;
+            padding: 10px;
+            background-color: #2c3e50;
+            color: white;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 1.8em;
+        }
+        .nav-toggle {
+            display: block;
+            font-size: 1.5em;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+        .nav-menu {
+            display: none;
+            background-color: #34495e;
+            padding: 10px;
+        }
+        .nav-menu.active {
+            display: block;
+        }
+        .nav-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .nav-menu li {
+            margin: 10px 0;
+        }
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2em;
+        }
+        .content {
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        .rosary-section {
+            margin-bottom: 20px;
+        }
+        .rosary-section h2 {
+            color: #2c3e50;
+        }
+        /* Ensure mobile-only styling */
+        @media (min-width: 769px) {
+            body::before {
+                content: "Please visit rosary.qzz.io on a mobile device for this view.";
+                display: block;
+                text-align: center;
+                padding: 20px;
+                font-size: 1.5em;
+            }
+            .container, .header, .nav-toggle, .nav-menu, .content {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="nav-toggle">☰</button>
+        <h1>The Holy Rosary</h1>
+        <div class="nav-menu">
+            <ul id="nav-links">
+                <!-- Navigation links will be populated dynamically -->
+            </ul>
+        </div>
+    </div>
+    <div class="container">
+        <div class="content" id="main-content">
+            <!-- Content will be populated dynamically -->
+        </div>
+    </div>
+    <script>
+        // Toggle mobile menu
+        document.querySelector('.nav-toggle').addEventListener('click', () => {
+            document.querySelector('.nav-menu').classList.toggle('active');
+        });
+
+        // Fetch content from rosary.html
+        fetch('/rosary.html')
+            .then(response => response.text())
+            .then(data => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(data, 'text/html');
+
+                // Extract main content (adjust selector based on rosary.html structure)
+                const content = doc.querySelector('body') || doc.body;
+                const mainContent = document.getElementById('main-content');
+                mainContent.innerHTML = content.innerHTML;
+
+                // Generate navigation links for mysteries (adjust selectors as needed)
+                const sections = doc.querySelectorAll('h2, h3'); // Assuming mysteries are under h2 or h3
+                const navLinks = document.getElementById('nav-links');
+                sections.forEach(section => {
+                    const id = section.textContent.toLowerCase().replace(/\s+/g, '-');
+                    section.id = id; // Add ID to section for linking
+                    const li = document.createElement('li');
+                    const a = document.createElement('a');
+                    a.href = `#${id}`;
+                    a.textContent = section.textContent;
+                    li.appendChild(a);
+                    navLinks.appendChild(li);
+                });
+
+                // Re-inject modified content to ensure IDs are applied
+                mainContent.innerHTML = content.innerHTML;
+            })
+            .catch(error => {
+                console.error('Error fetching content:', error);
+                document.getElementById('main-content').innerHTML = '<p>Error loading content. Please try again.</p>';
+            });
+    </script>
+</body>
+</html>
