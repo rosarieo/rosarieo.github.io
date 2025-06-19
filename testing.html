@@ -9,7 +9,7 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #e0e0e0; /* Match rosary.html background */
+            background-color: #f4f4f4; /* Reverted to original */
             color: #333;
         }
         .container {
@@ -20,7 +20,7 @@
         .header {
             text-align: center;
             padding: 10px;
-            background-color: #1a2b3a; /* Darker than original #2c3e50 */
+            background-color: #d0d0d0; /* Slightly darker than content #e0e0e0 */
             color: white;
         }
         .header h1 {
@@ -40,7 +40,7 @@
         }
         .nav-menu {
             display: none;
-            background-color: #34495e; /* Keep original nav menu color */
+            background-color: #d0d0d0; /* Match header, darker than content */
             padding: 10px;
         }
         .nav-menu.active {
@@ -63,7 +63,8 @@
         }
         .content {
             padding: 20px;
-            background: white; /* Keep white for readability */
+            background: #272a3d; /* Match rosary.html background */
+            color: #333; /* Match rosary.html text */
             border-radius: 8px;
             margin-top: 10px;
         }
@@ -71,7 +72,7 @@
             margin-bottom: 20px;
         }
         .rosary-section h2 {
-            color: #1a2b3a; /* Match darker header color */
+            color: #2c3e50; /* Reverted to original */
         }
         .error-message {
             color: red;
@@ -84,7 +85,7 @@
                 text-align: center;
                 padding: 20px;
                 font-size: 1.5em;
-                background-color: #e0e0e0;
+                background-color: #f4f4f4;
             }
             .container, .header, .nav-toggle, .nav-menu, .content {
                 display: none;
@@ -161,8 +162,12 @@
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
                     const href = link.getAttribute('href');
-                    if (href && href !== '#') {
+                    const target = link.getAttribute('target');
+                    if (href && href !== '#' && !target) {
                         loadContent(href);
+                        document.querySelector('.nav-menu').classList.remove('active');
+                    } else if (target === '_blank') {
+                        window.open(href, '_blank');
                         document.querySelector('.nav-menu').classList.remove('active');
                     }
                 });
@@ -175,7 +180,9 @@
             { text: 'Latin Rosary', href: '/latin.html' },
             { text: 'Mysteries', href: '/mysteries.html' },
             { text: 'Rosary Guide', href: '/rosary_guide.html' },
-            { text: 'Catechism', href: '/trent/trent.html' }
+            { text: 'Catechism', href: '/trent/trent.html' },
+            { text: 'Rosary App', href: '/app/desktop.html' },
+            { text: 'Contact', href: 'https://form.jotform.com/210341816022138', target: '_blank' }
         ];
 
         // Fetch topnav from rosary.html
@@ -201,6 +208,20 @@
                         li.appendChild(a);
                         navLinks.appendChild(li);
                     });
+                    // Add custom menu items
+                    const customLinks = [
+                        { text: 'Rosary App', href: '/app/desktop.html' },
+                        { text: 'Contact', href: 'https://form.jotform.com/210341816022138', target: '_blank' }
+                    ];
+                    customLinks.forEach(item => {
+                        const li = document.createElement('li');
+                        const a = document.createElement('a');
+                        a.href = item.href;
+                        a.textContent = item.text;
+                        if (item.target) a.setAttribute('target', item.target);
+                        li.appendChild(a);
+                        navLinks.appendChild(li);
+                    });
                     loadContent('/rosary.html');
                     attachMenuListeners();
                 } else {
@@ -216,6 +237,7 @@
                     const a = document.createElement('a');
                     a.href = item.href;
                     a.textContent = item.text;
+                    if (item.target) a.setAttribute('target', item.target);
                     li.appendChild(a);
                     navLinks.appendChild(li);
                 });
