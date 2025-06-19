@@ -9,7 +9,7 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            background-color: #e0e0e0; /* Match rosary.html background */
             color: #333;
         }
         .container {
@@ -20,7 +20,7 @@
         .header {
             text-align: center;
             padding: 10px;
-            background-color: #2c3e50;
+            background-color: #1a2b3a; /* Darker than original #2c3e50 */
             color: white;
         }
         .header h1 {
@@ -40,7 +40,7 @@
         }
         .nav-menu {
             display: none;
-            background-color: #34495e;
+            background-color: #34495e; /* Keep original nav menu color */
             padding: 10px;
         }
         .nav-menu.active {
@@ -63,7 +63,7 @@
         }
         .content {
             padding: 20px;
-            background: white;
+            background: white; /* Keep white for readability */
             border-radius: 8px;
             margin-top: 10px;
         }
@@ -71,7 +71,7 @@
             margin-bottom: 20px;
         }
         .rosary-section h2 {
-            color: #2c3e50;
+            color: #1a2b3a; /* Match darker header color */
         }
         .error-message {
             color: red;
@@ -84,7 +84,7 @@
                 text-align: center;
                 padding: 20px;
                 font-size: 1.5em;
-                background-color: #fff;
+                background-color: #e0e0e0;
             }
             .container, .header, .nav-toggle, .nav-menu, .content {
                 display: none;
@@ -113,15 +113,22 @@
             document.querySelector('.nav-menu').classList.toggle('active');
         });
 
-        // Function to clean content (remove scripts, topnav, inline styles, etc.)
+        // Function to clean content (remove scripts, topnav, header image, inline styles)
         function cleanContent(content) {
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = content.innerHTML;
-            // Remove script tags to prevent execution
+            // Remove script tags
             tempDiv.querySelectorAll('script').forEach(script => script.remove());
-            // Remove topnav to avoid duplicate navigation
+            // Remove topnav
             tempDiv.querySelectorAll('div.topnav').forEach(nav => nav.remove());
-            // Optionally remove inline styles
+            // Remove header image and its wrapping p and br
+            tempDiv.querySelectorAll('p > img[src="/images/png/prayinghands.png"]').forEach(img => {
+                const p = img.parentElement;
+                const br = p.nextElementSibling;
+                if (br && br.tagName === 'BR') br.remove();
+                p.remove();
+            });
+            // Remove inline styles
             tempDiv.querySelectorAll('[style]').forEach(el => el.removeAttribute('style'));
             return tempDiv.innerHTML;
         }
