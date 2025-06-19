@@ -73,18 +73,21 @@
         .rosary-section h2 {
             color: #2c3e50;
         }
-        /* Ensure mobile-only styling */
+        .error-message {
+            color: red;
+            font-weight: bold;
+        }
         @media (min-width: 769px) {
             body::before {
                 content: "Please visit rosary.qzz.io on a mobile device for this view.";
-                display: block;
-                text-align: center;
-                padding: 20px;
-                font-size: 1.5em;
-            }
-            .container, .header, .nav-toggle, .nav-menu, .content {
-                display: none;
-            }
+ROID            display: block;
+            text-align: center;
+            padding: 20px;
+            font-size: 1.5em;
+            background-color: #fff;
+        }
+        .container, .header, .nav-toggle, .nav-menu, .content {
+            display: none;
         }
     </style>
 </head>
@@ -109,11 +112,22 @@
             document.querySelector('.nav-menu').classList.toggle('active');
         });
 
+        // Function to clean content (remove scripts, inline styles, etc.)
+        function cleanContent(content) {
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = content.innerHTML;
+            // Remove script tags to prevent execution
+            tempDiv.querySelectorAll('script').forEach(script => script.remove());
+            // Optionally remove inline styles or other unwanted elements
+            tempDiv.querySelectorAll('[style]').forEach(el => el.removeAttribute('style'));
+            return tempDiv.innerHTML;
+        }
+
         // Function to load content from a URL
         function loadContent(url) {
-            fetch(url, { mode: 'cors' })
+            fetch(url)
                 .then(response => {
-                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
                     return response.text();
                 })
                 .then(data => {
@@ -121,14 +135,12 @@
                     const doc = parser.parseFromString(data, 'text/html');
                     const content = doc.querySelector('body') || doc.body;
                     const mainContent = document.getElementById('main-content');
-                    mainContent.innerHTML = content.innerHTML;
-
-                    // Re-attach event listeners to menu links after content load
+                    mainContent.innerHTML = cleanContent(content);
                     attachMenuListeners();
                 })
                 .catch(error => {
                     console.error('Error fetching content:', error);
-                    document.getElementById('main-content').innerHTML = '<p>Error loading content. Please try again.</p>';
+                    document.getElementById('main-content').innerHTML = '<p class="error-message">Failed to load content. Check your connection or try again later.</p>';
                 });
         }
 
@@ -141,16 +153,23 @@
                     const href = link.getAttribute('href');
                     if (href && href !== '#') {
                         loadContent(href);
-                        document.querySelector('.nav-menu').classList.remove('active'); // Close menu
+                        document.querySelector('.nav-menu').classList.remove('active');
                     }
                 });
             });
         }
 
-        // Fetch topnav from main site
-        fetch('https://rosary.qzz.io/rosary.html', { mode: 'cors' })
+        // Fallback menu if fetch fails
+        const fallbackMenu = [
+            { text: 'English Rosary', href: '/english.html' },
+            { text: 'Latin Rosary', href: '/latin.html' },
+            { text: 'Rosary Guide', href: '/guide.html' }
+        ];
+
+        // Fetch topnav from rosary.html
+        fetch('/rosary.html')
             .then(response => {
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
                 return response.text();
             })
             .then(data => {
@@ -161,29 +180,36 @@
 
                 if (topnav) {
                     const links = topnav.querySelectorAll('a');
+                    navLinks.innerHTML = '';
                     links.forEach(link => {
                         const li = document.createElement('li');
                         const a = document.createElement('a');
-                        a.href = link.href; // Use full URL
+                        a.href = link.href.includes('http') ? link.href : '/' + link.href.replace(/^\//, '');
                         a.textContent = link.textContent;
                         li.appendChild(a);
                         navLinks.appendChild(li);
                     });
-
-                    // Load default content (home page)
-                    loadContent('https://rosary.qzz.io/');
-
-                    // Attach event listeners to menu links
+                    loadContent('/rosary.html');
                     attachMenuListeners();
                 } else {
-                    navLinks.innerHTML = '<li><a href="#">Error: Navigation not found</a></li>';
-                    document.getElementById('main-content').innerHTML = '<p>Error loading navigation. Please try again.</p>';
+                    throw new Error('Topnav not found');
                 }
             })
             .catch(error => {
                 console.error('Error fetching topnav:', error);
-                document.getElementById('nav-links').innerHTML = '<li><a href="#">Error: Navigation not found</a></li>';
-                document.getElementById('main-content').innerHTML = '<p>Error loading content. Please try again.</p>';
+                const navLinks = document.getElementById('nav-links');
+                navLinks.innerHTML = '';
+                fallbackMenu.forEach(item => {
+                    const li = document.createElement('li');
+                    const a = document.createElement('a');
+                    a.href = item.href;
+                    a.textContent = item.text;
+                    li.appendChild(a);
+                    navLinks.appendChild(li);
+                });
+                document.getElementById('main-content').innerHTML = '<p class="error-message">Failed to load navigation. Using fallback menu.</p>';
+                loadContent('/rosary.html');
+                attachMenuListeners();
             });
     </script>
 </body>
