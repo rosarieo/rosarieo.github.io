@@ -80,14 +80,15 @@
         @media (min-width: 769px) {
             body::before {
                 content: "Please visit rosary.qzz.io on a mobile device for this view.";
-ROID            display: block;
-            text-align: center;
-            padding: 20px;
-            font-size: 1.5em;
-            background-color: #fff;
-        }
-        .container, .header, .nav-toggle, .nav-menu, .content {
-            display: none;
+                display: block;
+                text-align: center;
+                padding: 20px;
+                font-size: 1.5em;
+                background-color: #fff;
+            }
+            .container, .header, .nav-toggle, .nav-menu, .content {
+                display: none;
+            }
         }
     </style>
 </head>
@@ -112,13 +113,15 @@ ROID            display: block;
             document.querySelector('.nav-menu').classList.toggle('active');
         });
 
-        // Function to clean content (remove scripts, inline styles, etc.)
+        // Function to clean content (remove scripts, topnav, inline styles, etc.)
         function cleanContent(content) {
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = content.innerHTML;
             // Remove script tags to prevent execution
             tempDiv.querySelectorAll('script').forEach(script => script.remove());
-            // Optionally remove inline styles or other unwanted elements
+            // Remove topnav to avoid duplicate navigation
+            tempDiv.querySelectorAll('div.topnav').forEach(nav => nav.remove());
+            // Optionally remove inline styles
             tempDiv.querySelectorAll('[style]').forEach(el => el.removeAttribute('style'));
             return tempDiv.innerHTML;
         }
@@ -161,9 +164,11 @@ ROID            display: block;
 
         // Fallback menu if fetch fails
         const fallbackMenu = [
-            { text: 'English Rosary', href: '/english.html' },
+            { text: 'English Rosary', href: '/rosary.html' },
             { text: 'Latin Rosary', href: '/latin.html' },
-            { text: 'Rosary Guide', href: '/guide.html' }
+            { text: 'Mysteries', href: '/mysteries.html' },
+            { text: 'Rosary Guide', href: '/rosary_guide.html' },
+            { text: 'Catechism', href: '/trent/trent.html' }
         ];
 
         // Fetch topnav from rosary.html
@@ -185,7 +190,7 @@ ROID            display: block;
                         const li = document.createElement('li');
                         const a = document.createElement('a');
                         a.href = link.href.includes('http') ? link.href : '/' + link.href.replace(/^\//, '');
-                        a.textContent = link.textContent;
+                        a.textContent = link.textContent.trim();
                         li.appendChild(a);
                         navLinks.appendChild(li);
                     });
