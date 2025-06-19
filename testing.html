@@ -9,20 +9,20 @@
     <style>
         body {
             font-family: "RawlineRegular", "Century Gothic", "Apple Gothic", "URW Gothic L", "Avant Garde", sans-serif;
-            margin: 1.6em; /* Match rosary.html mobile margins */
+            margin: 1.6em;
             padding: 0;
-            background-color: #f4f4f4; /* Keep for contrast outside content */
+            background-color: #272a3d; /* Match content area */
             color: oldlace;
         }
         .container {
             max-width: 100%;
-            margin: 0 auto.magic;
+            margin: 0 auto;
             padding: 10px;
         }
         .header {
             text-align: center;
             padding: 10px;
-            background-color: #2c3e50; /* Reverted to original */
+            background-color: #464b6d; /* Original header color */
             color: white;
         }
         .header h1 {
@@ -44,7 +44,7 @@
         }
         .nav-menu {
             display: none;
-            background-color: #34495e; /* Reverted to original */
+            background-color: #464b6d; /* Match header */
             padding: 10px;
         }
         .nav-menu.active {
@@ -59,27 +59,27 @@
             margin: 10px 0;
         }
         .nav-menu a {
-            color: oldlace; /* Match rosary.html */
+            color: oldlace;
             text-decoration: none;
-            font-size: 1.5em; /* Match topnav */
+            font-size: 1.5em;
             font-family: Muli, "Century Gothic", "Apple Gothic", "URW Gothic L", "Avant Garde", sans-serif;
             display: block;
             padding: 8px;
         }
         .nav-menu a:hover {
-            background-color: oldlace; /* Match rosary.html hover */
+            background-color: oldlace;
             color: black;
             border-radius: 4%;
         }
         .content {
             padding: 20px;
-            background: #272a3d; /* Match rosary.html background */
-            color: oldlace; /* Match rosary.html text */
+            background: #272a3d;
+            color: oldlace;
             border-radius: 8px;
             margin-top: 10px;
         }
         .content a {
-            color: #b1b5cd; /* Match rosary.html links */
+            color: #b1b5cd;
         }
         .content a:hover {
             background-color: oldlace;
@@ -88,7 +88,7 @@
         }
         .content h1 {
             font-family: "AnalectaRegular", Courier;
-            color: #b1b5cd; /* Match rosary.html h1 */
+            color: #b1b5cd;
             font-size: 1.7em;
         }
         .content h2, .content h3 {
@@ -114,7 +114,7 @@
                 text-align: center;
                 padding: 20px;
                 font-size: 1.5em;
-                background-color: #f4f4f4;
+                background-color: #272a3d;
             }
             .container, .header, .nav-toggle, .nav-menu, .content {
                 display: none;
@@ -205,8 +205,8 @@
             { text: 'Latin Rosary', href: '/latin.html' },
             { text: 'Mysteries', href: '/mysteries.html' },
             { text: 'Rosary Guide', href: '/rosary_guide.html' },
-            { text: 'Catechism', href: '/trent/trent.html' },
-            { text: 'Rosary App', href: '/app/desktop.html' },
+            { text: 'Catechism', href: '../trent/trent.html' },
+            { text: 'Rosary App', href: '../app/rosary.html' },
             { text: 'Contact', href: 'https://form.jotform.com/210341816022138', target: '_blank' }
         ];
 
