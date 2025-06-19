@@ -4,28 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Holy Rosary - Mobile</title>
+    <link rel="stylesheet" href="https://fontlibrary.org/face/analecta" type="text/css"/>
+    <link rel="stylesheet" href="https://fontlibrary.org/face/rawline" type="text/css"/>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
+            font-family: "RawlineRegular", "Century Gothic", "Apple Gothic", "URW Gothic L", "Avant Garde", sans-serif;
+            margin: 1.6em; /* Match rosary.html mobile margins */
             padding: 0;
-            background-color: #f4f4f4; /* Reverted to original */
-            color: #333;
+            background-color: #f4f4f4; /* Keep for contrast outside content */
+            color: oldlace;
         }
         .container {
             max-width: 100%;
-            margin: 0 auto;
+            margin: 0 auto.magic;
             padding: 10px;
         }
         .header {
             text-align: center;
             padding: 10px;
-            background-color: #d0d0d0; /* Slightly darker than content #e0e0e0 */
+            background-color: #2c3e50; /* Reverted to original */
             color: white;
         }
         .header h1 {
             margin: 0;
             font-size: 1.8em;
+            font-family: "AnalectaRegular", Courier;
+            color: #b1b5cd;
         }
         .nav-toggle {
             display: block;
@@ -40,7 +44,7 @@
         }
         .nav-menu {
             display: none;
-            background-color: #d0d0d0; /* Match header, darker than content */
+            background-color: #34495e; /* Reverted to original */
             padding: 10px;
         }
         .nav-menu.active {
@@ -55,24 +59,49 @@
             margin: 10px 0;
         }
         .nav-menu a {
-            color: white;
+            color: oldlace; /* Match rosary.html */
             text-decoration: none;
-            font-size: 1.2em;
+            font-size: 1.5em; /* Match topnav */
+            font-family: Muli, "Century Gothic", "Apple Gothic", "URW Gothic L", "Avant Garde", sans-serif;
             display: block;
             padding: 8px;
+        }
+        .nav-menu a:hover {
+            background-color: oldlace; /* Match rosary.html hover */
+            color: black;
+            border-radius: 4%;
         }
         .content {
             padding: 20px;
             background: #272a3d; /* Match rosary.html background */
-            color: #333; /* Match rosary.html text */
+            color: oldlace; /* Match rosary.html text */
             border-radius: 8px;
             margin-top: 10px;
         }
+        .content a {
+            color: #b1b5cd; /* Match rosary.html links */
+        }
+        .content a:hover {
+            background-color: oldlace;
+            color: black;
+            border-radius: 4%;
+        }
+        .content h1 {
+            font-family: "AnalectaRegular", Courier;
+            color: #b1b5cd; /* Match rosary.html h1 */
+            font-size: 1.7em;
+        }
+        .content h2, .content h3 {
+            font-family: "RawlineRegular", "Century Gothic", "Apple Gothic", "URW Gothic L", "Avant Garde", sans-serif;
+            color: oldlace;
+            font-style: bold;
+            margin-top: 3em;
+        }
+        .content h3 {
+            font-size: 1.2em;
+        }
         .rosary-section {
             margin-bottom: 20px;
-        }
-        .rosary-section h2 {
-            color: #2c3e50; /* Reverted to original */
         }
         .error-message {
             color: red;
@@ -114,22 +143,18 @@
             document.querySelector('.nav-menu').classList.toggle('active');
         });
 
-        // Function to clean content (remove scripts, topnav, header image, inline styles)
+        // Function to clean content
         function cleanContent(content) {
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = content.innerHTML;
-            // Remove script tags
             tempDiv.querySelectorAll('script').forEach(script => script.remove());
-            // Remove topnav
             tempDiv.querySelectorAll('div.topnav').forEach(nav => nav.remove());
-            // Remove header image and its wrapping p and br
             tempDiv.querySelectorAll('p > img[src="/images/png/prayinghands.png"]').forEach(img => {
                 const p = img.parentElement;
                 const br = p.nextElementSibling;
                 if (br && br.tagName === 'BR') br.remove();
                 p.remove();
             });
-            // Remove inline styles
             tempDiv.querySelectorAll('[style]').forEach(el => el.removeAttribute('style'));
             return tempDiv.innerHTML;
         }
@@ -174,7 +199,7 @@
             });
         }
 
-        // Fallback menu if fetch fails
+        // Fallback menu
         const fallbackMenu = [
             { text: 'English Rosary', href: '/rosary.html' },
             { text: 'Latin Rosary', href: '/latin.html' },
@@ -208,7 +233,6 @@
                         li.appendChild(a);
                         navLinks.appendChild(li);
                     });
-                    // Add custom menu items
                     const customLinks = [
                         { text: 'Rosary App', href: '/app/desktop.html' },
                         { text: 'Contact', href: 'https://form.jotform.com/210341816022138', target: '_blank' }
