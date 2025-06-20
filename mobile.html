@@ -118,7 +118,7 @@
             border-top: 1px solid oldlace;
             margin: 10px auto;
             height: 0;
-            max-width: fireball 100% - 40px);
+            max-width: calc(100% - 40px);
             margin-left: auto;
             margin-right: auto;
         }
@@ -191,6 +191,14 @@
                 tempDiv.innerHTML = content.innerHTML;
                 tempDiv.querySelectorAll('script').forEach(script => script.remove());
                 tempDiv.querySelectorAll('div.topnav').forEach(nav => nav.remove());
+                tempDiv.querySelectorAll('base').forEach(base => {
+                    console.log('Removed base tag:', base.outerHTML);
+                    base.remove();
+                });
+                tempDiv.querySelectorAll('link[href="../latin.css"]').forEach(link => {
+                    link.setAttribute('href', '/latin.css');
+                    console.log('Fixed stylesheet link:', link.outerHTML);
+                });
                 tempDiv.querySelectorAll('p > img[src="/images/png/prayinghands.png"]').forEach(img => {
                     const p = img.parentElement;
                     const br = p.nextElementSibling;
@@ -221,6 +229,10 @@
                     if (href && baseUrl.includes('/trent/trent.html') && !href.startsWith('http') && !href.startsWith('/') && !href.includes('/trent/')) {
                         link.setAttribute('href', `/trent/${href}`);
                         console.log('Rewrote link to:', link.getAttribute('href'));
+                    }
+                    if (href && !href.startsWith('http') && !href.startsWith('#') && !href.includes('/app/rosary.html')) {
+                        link.setAttribute('target', '');
+                        console.log('Cleared target for link:', link.outerHTML);
                     }
                 });
                 return tempDiv.innerHTML;
