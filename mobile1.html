@@ -125,7 +125,7 @@
         .content hr[style*="visibility: hidden"] {
             visibility: hidden;
             height: 20px;
-            margin: 0;
+            marginii: 0;
             border: none;
         }
         .top-link {
@@ -148,25 +148,35 @@
             color: red;
             font-weight: bold;
         }
-        .youtube-links {
-            list-style: none;
-            padding: 0;
+        .youtube-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
             margin: 10px 0;
         }
-        .youtube-links li {
-            margin: 5px 0;
-        }
-        .youtube-links a {
+        .youtube-card {
             display: block;
-            padding: 8px;
-            color: #b1b5cd;
+            background-color: #464b6d;
+            color: oldlace;
             text-decoration: none;
-            font-size: 1.1em;
+            padding: 10px;
+            border-radius: 8px;
+            transition: background-color 0.3s;
         }
-        .youtube-links a:hover {
+        .youtube-card:hover {
             background-color: oldlace;
             color: black;
-            border-radius: 4%;
+        }
+        .youtube-card img {
+            width: 100%;
+            max-width: 120px;
+            height: auto;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+        .youtube-card span {
+            font-size: 1.1em;
+            font-family: "RawlineRegular", "Century Gothic", "Apple Gothic", "URW Gothic L", "Avant Garde", sans-serif;
         }
         @media (min-width: 769px) {
             body::before {
@@ -229,21 +239,27 @@
                     console.log('Found YouTube select:', select.outerHTML);
                     const options = select.querySelectorAll('option');
                     if (options.length > 0) {
-                        const ul = document.createElement('ul');
-                        ul.className = 'youtube-links';
+                        const div = document.createElement('div');
+                        div.className = 'youtube-cards';
                         options.forEach(option => {
                             if (option.value && option.value.startsWith('http')) {
-                                const li = document.createElement('li');
                                 const a = document.createElement('a');
                                 a.href = option.value;
-                                a.textContent = option.textContent || 'YouTube Video';
+                                a.className = 'youtube-card';
                                 a.setAttribute('target', '_blank');
-                                li.appendChild(a);
-                                ul.appendChild(li);
+                                // Placeholder thumbnail; replace with actual YouTube thumbnail URL if available
+                                const img = document.createElement('img');
+                                img.src = 'https://via.placeholder.com/120x68?text=Video';
+                                img.alt = 'Video Thumbnail';
+                                const span = document.createElement('span');
+                                span.textContent = option.textContent || 'YouTube Video';
+                                a.appendChild(img);
+                                a.appendChild(span);
+                                div.appendChild(a);
                             }
                         });
-                        console.log('Created YouTube links:', ul.outerHTML);
-                        select.parentElement.replaceChild(ul, select);
+                        console.log('Created YouTube cards:', div.outerHTML);
+                        select.parentElement.replaceChild(div, select);
                     } else {
                         console.log('No options found in select:', select.outerHTML);
                         select.remove();
@@ -262,4 +278,178 @@
                 tempDiv.querySelectorAll('a').forEach(link => {
                     const href = link.getAttribute('href');
                     console.log('Processing link:', href);
-                    if (href && baseUrl.includes('/trent;EAntirety of document.
+                    if (href && baseUrl.includes('/trent/trent.html') && !href.startsWith('http') && !href.startsWith('/') && !href.includes('/trent/')) {
+                        link.setAttribute('href', `/trent/${href}`);
+                        console.log('Rewrote link to:', link.getAttribute('href'));
+                    }
+                    if (href && !href.startsWith('http') && !href.startsWith('#') && !href.includes('/app/rosary.html')) {
+                        link.setAttribute('target', '');
+                        console.log('Cleared target for link:', link.outerHTML);
+                    }
+                });
+                return tempDiv.innerHTML;
+            }
+
+            // Function to load content from a URL
+            function loadContent(url) {
+                const cleanUrl = url.split('#')[0];
+                console.log('Loading content from:', cleanUrl);
+                fetch(cleanUrl)
+                    .then(response => {
+                        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                        return response.text();
+                    })
+                    .then(data => {
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(data, 'text/html');
+                        const content = doc.querySelector('body') || doc.body;
+                        const mainContent = document.getElementById('main-content');
+                        mainContent.innerHTML = cleanContent(content, cleanUrl);
+                        const topLink = document.createElement('a');
+                        topLink.href = '#';
+                        topLink.className = 'top-link';
+                        topLink.textContent = 'Top';
+                        mainContent.appendChild(topLink);
+                        attachContentLinkListeners();
+                        attachMenuListeners();
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        mainContent.scrollTo({ top: 0, behavior: 'smooth' });
+                        console.log('Scroll position after:', window.scrollY, mainContent.scrollTop);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching content:', error);
+                        document.getElementById('main-content').innerHTML = '<p class="error-message">Failed to load content. Check your connection or try again later.</p>';
+                    });
+            }
+
+            // Function to attach click listeners to menu links
+            function attachMenuListeners() {
+                const menuLinks = document.querySelectorAll('.nav-menu a');
+                menuLinks.forEach(link => {
+                    link.removeEventListener('click', link._handler);
+                    const handler = (e) => {
+                        e.preventDefault();
+                        const href = link.getAttribute('href');
+                        const target = link.getAttribute('target');
+                        console.log('Menu link clicked:', href, 'Target:', target);
+                        if (href && href !== '#') {
+                            if (target === '_self' || href.includes('/app/rosary.html')) {
+                                console.log('Navigating to:', href);
+                                window.location.href = href;
+                            } else if (target === '_blank') {
+                                console.log('Opening in new tab:', href);
+                                window.open(href, '_blank');
+                                document.querySelector('.nav-menu').classList.remove('active');
+                            } else {
+                                console.log('Loading content in mobile view:', href);
+                                loadContent(href);
+                                document.querySelector('.nav-menu').classList.remove('active');
+                            }
+                        }
+                    };
+                    link._handler = handler;
+                    link.addEventListener('click', handler);
+                });
+            }
+
+            // Function to attach click listeners to content links
+            function attachContentLinkListeners() {
+                const contentLinks = document.querySelectorAll('.content a:not(.top-link):not(.youtube-card)');
+                contentLinks.forEach(link => {
+                    link.removeEventListener('click', link._handler);
+                    const handler = (e) => {
+                        e.preventDefault();
+                        const href = link.getAttribute('href');
+                        const target = link.getAttribute('target');
+                        console.log('Clicked link:', href, 'Target:', target);
+                        if (href && (href.includes('/app/rosary.html') || target === '_self')) {
+                            window.location.href = href;
+                        } else if (href && href.startsWith('http')) {
+                            window.open(href, '_blank');
+                        } else if (href === '#' || href === '#top') {
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                        } else if (href && href !== '#') {
+                            const resolvedUrl = href.startsWith('/') ? href : `/${href}`;
+                            console.log('Resolved URL:', resolvedUrl);
+                            loadContent(resolvedUrl);
+                        }
+                    };
+                    link._handler = handler;
+                    link.addEventListener('click', handler);
+                });
+            }
+
+            // Fallback menu
+            const fallbackMenu = [
+                { text: 'English Rosary', href: '/rosary.html' },
+                { text: 'Latin Rosary', href: '/latin.html' },
+                { text: 'Mysteries', href: '/mysteries.html' },
+                { text: 'Rosary Guide', href: '/rosary_guide.html' },
+                { text: 'Catechism', href: '/trent/trent.html' },
+                { text: 'Rosary App', href: '/app/rosary.html', target: '_self' },
+                { text: 'Contact', href: 'https://form.jotform.com/210341816022138', target: '_blank' }
+            ];
+
+            // Fetch topnav from rosary.html
+            fetch('/rosary.html')
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                    return response.text();
+                })
+                .then(data => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(data, 'text/html');
+                    const topnav = doc.querySelector('div.topnav');
+                    const navLinks = document.getElementById('nav-links');
+
+                    if (topnav) {
+                        const links = topnav.querySelectorAll('a');
+                        navLinks.innerHTML = '';
+                        links.forEach(link => {
+                            const li = document.createElement('li');
+                            const a = document.createElement('a');
+                            a.href = link.href.includes('http') ? link.href : '/' + link.href.replace(/^\//, '');
+                            a.textContent = link.textContent.trim();
+                            li.appendChild(a);
+                            navLinks.appendChild(li);
+                        });
+                        const customLinks = [
+                            { text: 'Rosary App', href: '/app/rosary.html', target: '_self' },
+                            { text: 'Contact', href: 'https://form.jotform.com/210341816022138', target: '_blank' }
+                        ];
+                        customLinks.forEach(item => {
+                            const li = document.createElement('li');
+                            const a = document.createElement('a');
+                            a.href = item.href;
+                            a.textContent = item.text;
+                            if (item.target) a.setAttribute('target', item.target);
+                            li.appendChild(a);
+                            navLinks.appendChild(li);
+                        });
+                        loadContent('/rosary.html');
+                        attachMenuListeners();
+                    } else {
+                        throw new Error('Topnav not found');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching topnav:', error);
+                    const navLinks = document.getElementById('nav-links');
+                    navLinks.innerHTML = '';
+                    fallbackMenu.forEach(item => {
+                        const li = document.createElement('li');
+                        const a = document.createElement('a');
+                        a.href = item.href;
+                        a.textContent = item.text;
+                        if (item.target) a.setAttribute('target', item.target);
+                        li.appendChild(a);
+                        navLinks.appendChild(li);
+                    });
+                    document.getElementById('main-content').innerHTML = '<p class="error-message">Failed to load navigation. Using fallback menu.</p>';
+                    loadContent('/rosary.html');
+                    attachMenuListeners();
+                });
+        });
+    </script>
+</body>
+</html>
