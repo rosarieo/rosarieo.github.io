@@ -199,7 +199,7 @@
                 });
                 tempDiv.querySelectorAll('button, input[type="button"]').forEach(el => {
                     el.removeAttribute('onclick');
-                    console.log('Removed onclick from:', el); // Debug
+                    console.log('Removed onclick from:', el);
                 });
                 tempDiv.querySelectorAll('[style]:not(hr):not(select):not(button):not(input)').forEach(el => el.removeAttribute('style'));
                 if (baseUrl.includes('/trent/trent.html')) {
@@ -233,7 +233,8 @@
                         topLink.textContent = 'Top';
                         mainContent.appendChild(topLink);
                         attachContentLinkListeners();
-                        attachYouTubeListeners();
+                        // Delay YouTube listeners to ensure DOM is ready
+                        setTimeout(attachYouTubeListeners, 0);
                         attachMenuListeners();
                     })
                     .catch(error => {
@@ -293,25 +294,29 @@
 
             // Function to attach YouTube button listeners
             function attachYouTubeListeners() {
-                const selectElements = document.querySelectorAll('.content select[name="youtube"]');
+                const selectElements = document.querySelectorAll('.content select[name="youtube"], .content select[name*="youtube" i]');
                 selectElements.forEach(select => {
-                    console.log('Found YouTube select:', select); // Debug
+                    console.log('Found YouTube select:', select.outerHTML); // Debug
                     let button = select.nextElementSibling;
                     if (!button || (button.tagName !== 'BUTTON' && button.tagName !== 'INPUT')) {
-                        // Broader search for nearby button
-                        button = select.parentElement.querySelector('button, input[type="button"]');
+                        // Search within parent or nearby
+                        button = select.parentElement.querySelector('button, input[type="button"]') ||
+                                 select.closest('p, div').querySelector('button, input[type="button"]');
                     }
                     if (button) {
-                        console.log('Found YouTube button:', button); // Debug
+                        console.log('Found YouTube button:', button.outerHTML); // Debug
                         button.removeEventListener('click', button._handler);
                         const handler = () => {
                             const url = select.value;
+                            console.log('Opening YouTube URL:', url); // Debug
                             if (url && url.startsWith('http')) {
                                 window.open(url, '_blank');
                             }
                         };
                         button._handler = handler;
                         button.addEventListener('click', handler);
+                    } else {
+                        console.log('No YouTube button found for select:', select.outerHTML); // Debug
                     }
                 });
             }
