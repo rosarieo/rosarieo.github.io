@@ -108,7 +108,7 @@
             margin-left: auto;
             margin-right: auto;
         }
-        .content audio, .content iframe, .content select, .content button {
+        .content audio, .content iframe, .content select, .content button, .content input[type="button"] {
             max-width: 100%;
             width: 100%;
             box-sizing: border-box;
@@ -197,15 +197,11 @@
                     if (br && br.tagName === 'BR') br.remove();
                     p.remove();
                 });
-                tempDiv.querySelectorAll('img[src*="/images/holy_fathers/"]').forEach(img => {
-                    console.log('Removing image:', img.src); // Debug
-                    const parent = img.parentElement;
-                    const br = img.nextElementSibling;
-                    if (br && br.tagName === 'BR') br.remove();
-                    if (parent.tagName === 'P') parent.remove();
-                    else img.remove();
+                tempDiv.querySelectorAll('button, input[type="button"]').forEach(el => {
+                    el.removeAttribute('onclick');
+                    console.log('Removed onclick from:', el); // Debug
                 });
-                tempDiv.querySelectorAll('[style]:not(hr):not(select):not(button)').forEach(el => el.removeAttribute('style'));
+                tempDiv.querySelectorAll('[style]:not(hr):not(select):not(button):not(input)').forEach(el => el.removeAttribute('style'));
                 if (baseUrl.includes('/trent/trent.html')) {
                     tempDiv.querySelectorAll('a').forEach(link => {
                         const href = link.getAttribute('href');
@@ -219,7 +215,6 @@
 
             // Function to load content from a URL
             function loadContent(url) {
-                // Strip fragments from URL
                 const cleanUrl = url.split('#')[0];
                 fetch(cleanUrl)
                     .then(response => {
@@ -300,8 +295,14 @@
             function attachYouTubeListeners() {
                 const selectElements = document.querySelectorAll('.content select[name="youtube"]');
                 selectElements.forEach(select => {
-                    const button = select.nextElementSibling;
-                    if (button && button.tagName === 'BUTTON') {
+                    console.log('Found YouTube select:', select); // Debug
+                    let button = select.nextElementSibling;
+                    if (!button || (button.tagName !== 'BUTTON' && button.tagName !== 'INPUT')) {
+                        // Broader search for nearby button
+                        button = select.parentElement.querySelector('button, input[type="button"]');
+                    }
+                    if (button) {
+                        console.log('Found YouTube button:', button); // Debug
                         button.removeEventListener('click', button._handler);
                         const handler = () => {
                             const url = select.value;
