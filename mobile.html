@@ -198,20 +198,22 @@
                     p.remove();
                 });
                 tempDiv.querySelectorAll('select[name*="youtube" i], select[name*="Youtube" i], select[name*="YOUTUBE" i]').forEach(select => {
-                    console.log('Found YouTube select:', select.outerHTML, 'Parent:', select.parentElement.outerHTML); // Debug
-                    // Remove existing buttons/inputs
+                    console.log('Found YouTube select:', select.outerHTML, 'Parent:', select.parentElement.outerHTML);
                     const next = select.nextElementSibling;
                     if (next && (next.tagName === 'BUTTON' || next.tagName === 'INPUT')) {
-                        console.log('Removing existing button:', next.outerHTML); // Debug
+                        console.log('Removing existing button:', next.outerHTML);
                         next.remove();
                     }
-                    // Inject new Go button
                     const goButton = document.createElement('input');
                     goButton.type = 'button';
                     goButton.value = 'Go';
                     goButton.setAttribute('data-youtube-button', select.name);
                     select.insertAdjacentElement('afterend', goButton);
-                    console.log('Injected Go button:', goButton.outerHTML); // Debug
+                    console.log('Injected Go button:', goButton.outerHTML);
+                });
+                tempDiv.querySelectorAll('a[href="/app/rosary.html"]').forEach(link => {
+                    link.setAttribute('target', '_self');
+                    console.log('Added target="_self" to Rosary App link:', link.outerHTML);
                 });
                 tempDiv.querySelectorAll('[style]:not(hr):not(select):not(button):not(input)').forEach(el => el.removeAttribute('style'));
                 if (baseUrl.includes('/trent/trent.html')) {
@@ -246,7 +248,6 @@
                         mainContent.appendChild(topLink);
                         attachContentLinkListeners();
                         attachMenuListeners();
-                        // Use MutationObserver to ensure YouTube buttons are bound
                         const observer = new MutationObserver(() => {
                             attachYouTubeListeners();
                             observer.disconnect();
@@ -293,7 +294,10 @@
                     const handler = (e) => {
                         e.preventDefault();
                         const href = link.getAttribute('href');
-                        if (href && href.startsWith('http')) {
+                        const target = link.getAttribute('target');
+                        if (href && href.includes('/app/rosary.html') || target === '_self') {
+                            window.location.href = href;
+                        } else if (href && href.startsWith('http')) {
                             window.open(href, '_blank');
                         } else if (href === '#' || href === '#top') {
                             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -311,28 +315,28 @@
             // Function to attach YouTube button listeners
             function attachYouTubeListeners() {
                 const buttons = document.querySelectorAll('.content input[data-youtube-button]');
-                console.log('Found YouTube buttons:', buttons.length); // Debug
+                console.log('Found YouTube buttons:', buttons.length);
                 buttons.forEach(button => {
-                    console.log('Binding YouTube button:', button.outerHTML); // Debug
+                    console.log('Binding YouTube button:', button.outerHTML);
                     const selectName = button.getAttribute('data-youtube-button');
                     const select = document.querySelector(`.content select[name="${selectName}"]`) ||
                                    document.querySelector(`.content select[name="${selectName}" i]`);
                     if (select) {
-                        console.log('Found associated select:', select.outerHTML); // Debug
+                        console.log('Found associated select:', select.outerHTML);
                         button.removeEventListener('click', button._handler);
                         const handler = () => {
                             const url = select.value;
-                            console.log('Opening YouTube URL:', url); // Debug
+                            console.log('Opening YouTube URL:', url);
                             if (url && url.startsWith('http')) {
                                 window.open(url, '_blank');
                             } else {
-                                console.log('Invalid or empty URL:', url); // Debug
+                                console.log('Invalid or empty URL:', url);
                             }
                         };
                         button._handler = handler;
                         button.addEventListener('click', handler);
                     } else {
-                        console.log('No select found for button:', button.outerHTML); // Debug
+                        console.log('No select found for button:', button.outerHTML);
                     }
                 });
             }
