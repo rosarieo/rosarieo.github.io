@@ -113,12 +113,15 @@
             box-sizing: border-box;
         }
         .content hr {
-            border-top: 1px solid oldlace; /* Visible lines like desktop */
-            margin: 10px 0;
+            border-top: 1px solid oldlace;
+            margin: 10px auto;
             height: 0;
+            max-width: calc(100% - 40px); /* Match header width */
+            margin-left: auto;
+            margin-right: auto;
         }
         .content hr[style*="visibility: hidden"] {
-            visibility: hidden; /* Keep hidden lines invisible */
+            visibility: hidden;
             height: 20px;
             margin: 0;
             border: none;
@@ -178,9 +181,7 @@
                 if (br && br.tagName === 'BR') br.remove();
                 p.remove();
             });
-            // Preserve hr inline styles for visibility: hidden
             tempDiv.querySelectorAll('[style]:not(hr)').forEach(el => el.removeAttribute('style'));
-            // Fix Catechism links if loading trent.html
             if (baseUrl.includes('/trent/trent.html')) {
                 tempDiv.querySelectorAll('a').forEach(link => {
                     const href = link.getAttribute('href');
