@@ -101,22 +101,22 @@
             font-size: 1.2em;
         }
         .content img {
-            max-width: 100%; /* Constrain images to viewport */
+            max-width: 100%;
             height: auto;
             display: block;
             margin-left: auto;
             margin-right: auto;
         }
         .content audio, .content iframe, .content select {
-            max-width: 100%; /* Constrain media players and dropdowns */
+            max-width: 100%;
             width: 100%;
             box-sizing: border-box;
         }
         .content hr {
-            visibility: hidden; /* Enforce hidden */
+            visibility: hidden;
             height: 20px;
             margin: 0;
-            border: none; /* Prevent stacking */
+            border: none;
         }
         .rosary-section {
             margin-bottom: 20px;
@@ -199,6 +199,7 @@
                     const content = doc.querySelector('body') || doc.body;
                     const mainContent = document.getElementById('main-content');
                     mainContent.innerHTML = cleanContent(content, url);
+                    attachContentLinkListeners();
                     attachMenuListeners();
                 })
                 .catch(error => {
@@ -211,22 +212,47 @@
         function attachMenuListeners() {
             const menuLinks = document.querySelectorAll('.nav-menu a');
             menuLinks.forEach(link => {
-                link.addEventListener('click', (e) => {
+                link.removeEventListener('click', link._handler); // Prevent duplicate listeners
+                const handler = (e) => {
                     e.preventDefault();
                     const href = link.getAttribute('href');
                     const target = link.getAttribute('target');
-                    if (href && href !== '#' && !target) {
-                        if (href.includes('/app/desktop.html')) {
+                    if (href && href !== '#') {
+                        if (target === '_self' || href.includes('/app/rosary.html')) {
                             window.location.href = href; // Open Rosary App in same tab
+                        } else if (target === '_blank') {
+                            window.open(href, '_blank');
+                            document.querySelector('.nav-menu').classList.remove('active');
                         } else {
                             loadContent(href);
+                            document.querySelector('.nav-menu').classList.remove('active');
                         }
-                        document.querySelector('.nav-menu').classList.remove('active');
-                    } else if (target === '_blank') {
-                        window.open(href, '_blank');
-                        document.querySelector('.nav-menu').classList.remove('active');
                     }
-                });
+                };
+                link._handler = handler;
+                link.addEventListener('click', handler);
+            });
+        }
+
+        // Function to attach click listeners to content links
+        function attachContentLinkListeners() {
+            const contentLinks = document.querySelectorAll('.content a');
+            contentLinks.forEach(link => {
+                link.removeEventListener('click', link._handler); // Prevent duplicate listeners
+                const handler = (e) => {
+                    e.preventDefault();
+                    const href = link.getAttribute('href');
+                    if (href && !href.startsWith('http') && href !== '#') {
+                        // Resolve relative URLs
+                        const baseUrl = window.location.origin;
+                        const resolvedUrl = href.startsWith('/') ? href : `/trent/${href}`;
+                        loadContent(resolvedUrl);
+                    } else if (href && href.startsWith('http')) {
+                        window.open(href, '_blank');
+                    }
+                };
+                link._handler = handler;
+                link.addEventListener('click', handler);
             });
         }
 
@@ -237,8 +263,8 @@
             { text: 'Mysteries', href: '/mysteries.html' },
             { text: 'Rosary Guide', href: '/rosary_guide.html' },
             { text: 'Catechism', href: '/trent/trent.html' },
-            { text: 'Rosary App', href: '/app/desktop.html', target: '_self' },
-            { text: 'Contact', href: 'https://form.jotform.com/210341816022138', target: '_blank' }
+            { text: 'Rosary App', href: '/app/rosary.html', target: '_self' },
+            { text: 'Contact', href: 'https://Federation: form.jotform.com/210341816022138', target: '_blank' }
         ];
 
         // Fetch topnav from rosary.html
@@ -265,7 +291,7 @@
                         navLinks.appendChild(li);
                     });
                     const customLinks = [
-                        { text: 'Rosary App', href: '/app/desktop.html', target: '_self' },
+                        { text: 'Rosary App', href: '/app/rosary.html', target: '_self' },
                         { text: 'Contact', href: 'https://form.jotform.com/210341816022138', target: '_blank' }
                     ];
                     customLinks.forEach(item => {
