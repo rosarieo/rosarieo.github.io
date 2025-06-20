@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Holy Rosary - Mobile</title>
+    <title>Holy Rosary - Mobile</title>
     <link rel="icon" type="image/png" href="/images/png/favicon.png">
     <link rel="stylesheet" href="https://fontlibrary.org/assets/fonts/analecta/8c7f0b7a8b8e7f8b7f8b7f8b7f8b7f8b/analecta.css" type="text/css"/>
     <link rel="stylesheet" href="https://fontlibrary.org/assets/fonts/rawline/9d8f0b7a8b8e7f8b7f8b7f8b7f8b7f8b/rawline.css" type="text/css"/>
@@ -162,12 +162,11 @@
             margin: 10px 0;
         }
         .youtube-card {
-            display: flex;
-            align-items: center;
+            display: block;
             background-color: #464b6d;
             color: oldlace;
             text-decoration: none;
-            padding: 10px;
+            padding: 12px;
             border-radius: 8px;
             transition: background-color 0.3s;
         }
@@ -175,15 +174,10 @@
             background-color: oldlace;
             color: black;
         }
-        .youtube-card img {
-            width: 120px;
-            height: 68px;
-            border-radius: 4px;
-            margin-right: 10px;
-        }
         .youtube-card span {
             font-size: 1.1em;
             font-family: "RawlineRegular", "Century Gothic", "Apple Gothic", "URW Gothic L", "Avant Garde", sans-serif;
+            display: block;
         }
         .lightbox {
             display: none;
@@ -228,7 +222,7 @@
 <body>
     <div class="header">
         <button class="nav-toggle">☰</button>
-        <h1>The Holy Rosary</h1>
+        <h1>Holy Rosary</h1>
         <div class="nav-menu">
             <ul id="nav-links">
                 <!-- Navigation links populated dynamically -->
@@ -303,12 +297,8 @@
                                 a.href = option.value;
                                 a.className = 'youtube-card';
                                 a.setAttribute('target', '_blank');
-                                const img = document.createElement('img');
-                                img.src = 'https://via.placeholder.com/120x68?text=Video';
-                                img.alt = 'Video Thumbnail';
                                 const span = document.createElement('span');
                                 span.textContent = option.textContent || 'YouTube Video';
-                                a.appendChild(img);
                                 a.appendChild(span);
                                 div.appendChild(a);
                             }
