@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Holy Rosary - Mobile</title>
+    <link rel="icon" type="image/png" href="/images/png/favicon.png">
+    <link rel="stylesheet" href="https://fontlibrary.org/assets/fonts/analecta/8c7f0b7a8b8e7f8b7f8b7f8b7f8b7f8b/analecta.css" type="text/css"/>
+    <link rel="stylesheet" href="https://fontlibrary.org/assets/fonts/rawline/9d8f0b7a8b8e7f8b7f8b7f8b7f8b7f8b/rawline.css" type="text/css"/>
+    <style>
+        body {
+            font-family: "RawlineRegular", "Century Gothic", "Apple Gothic", "URW Gothic L", "Avant Garde", sans-serif;
+            margin: 1.6em;
+            padding: 0;
+            background-color: #272a3d;
+            color: oldlace;
+        }
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 10px;
+        }
+        .header {
+            text-align: center;
+            padding: 10px;
+            background-color: #464b6d;
+            color: white;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 1.8em;
+            font-family: "AnalectaRegular", "Courier New", Courier, monospace;
+            color: #b1b5cd;
+        }
+        .nav-toggle {
+            display: block;
+            font-size: 1.5em;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+        .nav-menu {
+            display: none;
+            background-color: #464b6d;
+            padding: 10px;
+        }
+        .nav-menu.active {
+            display: block;
+        }
+        .nav-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .nav-menu li {
+            margin: 10px 0;
+        }
+        .nav-menu a {
+            color: oldlace;
+            text-decoration: none;
+            font-size: 1.5em;
+            font-family: "Muli", "Century Gothic", "Apple Gothic", "URW Gothic L", "Avant Garde", sans-serif;
+            display: block;
+            padding: 8px;
+        }
+        .nav-menu a:hover {
+            background-color: oldlace;
+            color: black;
+            border-radius: 4%;
+        }
+        .content {
+            padding: 20px;
+            background: #272a3d;
+            color: oldlace;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        .content a {
+            color: #b1b5cd;
+        }
+        .content a:hover {
+            background-color: oldlace;
+            color: black;
+            border-radius: 4%;
+        }
+        .content h1 {
+            font-family: "AnalectaRegular", "Courier New", Courier, monospace;
+            color: #b1b5cd;
+            font-size: 1.7em;
+        }
+        .content h2, .content h3 {
+            font-family: "RawlineRegular", "Century Gothic", "Apple Gothic", "URW Gothic L", "Avant Garde", sans-serif;
+            color: oldlace;
+            font-style: bold;
+            margin-top: 3em;
+        }
+        .content h3 {
+            font-size: 1.2em;
+        }
+        .content img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .content audio, .content iframe, .content select, .content button, .content input[type="button"] {
+            max-width: 100%;
+            width: 100%;
+            box-sizing: border-box;
+            margin: 5px 0;
+        }
+        .content hr {
+            border-top: 1px solid oldlace;
+            margin: 10px auto;
+            height: 0;
+            max-width: calc(100% - 40px);
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .content hr[style*="visibility: hidden"] {
+            visibility: hidden;
+            height: 20px;
+            margin: 0;
+            border: none;
+        }
+        .top-link {
+            display: block;
+            text-align: center;
+            color: #b1b5cd;
+            text-decoration: none;
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+        .top-link:hover {
+            background-color: oldlace;
+            color: black;
+            border-radius: 4%;
+        }
+        .rosary-section {
+            margin-bottom: 20px;
+        }
+        .error-message {
+            color: red;
+            font-weight: bold;
+        }
+        .youtube-links {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+        }
+        .youtube-links li {
+            margin: 5px 0;
+        }
+        .youtube-links a {
+            display: block;
+            padding: 8px;
+            color: #b1b5cd;
+            text-decoration: none;
+            font-size: 1.1em;
+        }
+        .youtube-links a:hover {
+            background-color: oldlace;
+            color: black;
+            border-radius: 4%;
+        }
+        @media (min-width: 769px) {
+            body::before {
+                content: "Please visit rosary.qzz.io on a mobile device for this view.";
+                display: block;
+                text-align: center;
+                padding: 20px;
+                font-size: 1.5em;
+                background-color: #272a3d;
+            }
+            .container, .header, .nav-toggle, .nav-menu, .content {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="nav-toggle">☰</button>
+        <h1>The Holy Rosary</h1>
+        <div class="nav-menu">
+            <ul id="nav-links">
+                <!-- Navigation links populated dynamically -->
+            </ul>
+        </div>
+    </div>
+    <div class="container">
+        <div class="content" id="main-content">
+            <p>Loading...</p>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Toggle mobile menu
+            document.querySelector('.nav-toggle').addEventListener('click', () => {
+                document.querySelector('.nav-menu').classList.toggle('active');
+            });
+
+            // Function to clean and fix content
+            function cleanContent(content, baseUrl) {
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = content.innerHTML;
+                tempDiv.querySelectorAll('script').forEach(script => script.remove());
+                tempDiv.querySelectorAll('div.topnav').forEach(nav => nav.remove());
+                tempDiv.querySelectorAll('base').forEach(base => {
+                    console.log('Removed base tag:', base.outerHTML);
+                    base.remove();
+                });
+                tempDiv.querySelectorAll('link[href="../latin.css"]').forEach(link => {
+                    link.setAttribute('href', '/latin.css');
+                    console.log('Fixed stylesheet link:', link.outerHTML);
+                });
+                tempDiv.querySelectorAll('p > img[src="/images/png/prayinghands.png"]').forEach(img => {
+                    const p = img.parentElement;
+                    const br = p.nextElementSibling;
+                    if (br && br.tagName === 'BR') br.remove();
+                    p.remove();
+                });
+                tempDiv.querySelectorAll('select[name*="youtube" i], select[name*="Youtube" i], select[name*="YOUTUBE" i]').forEach(select => {
+                    console.log('Found YouTube select:', select.outerHTML);
+                    const options = select.querySelectorAll('option');
+                    if (options.length > 0) {
+                        const ul = document.createElement('ul');
+                        ul.className = 'youtube-links';
+                        options.forEach(option => {
+                            if (option.value && option.value.startsWith('http')) {
+                                const li = document.createElement('li');
+                                const a = document.createElement('a');
+                                a.href = option.value;
+                                a.textContent = option.textContent || 'YouTube Video';
+                                a.setAttribute('target', '_blank');
+                                li.appendChild(a);
+                                ul.appendChild(li);
+                            }
+                        });
+                        console.log('Created YouTube links:', ul.outerHTML);
+                        select.parentElement.replaceChild(ul, select);
+                    } else {
+                        console.log('No options found in select:', select.outerHTML);
+                        select.remove();
+                    }
+                });
+                tempDiv.querySelectorAll('button, input[type="button"], input[type="submit"]').forEach(btn => {
+                    if (btn.hasAttribute('data-youtube-button') || btn.hasAttribute('onclick')) {
+                        console.log('Removed YouTube or onclick button:', btn.outerHTML);
+                        btn.remove();
+                    }
+                });
+                tempDiv.querySelectorAll('a[href="/app/rosary.html"]').forEach(link => {
+                    link.setAttribute('target', '_self');
+                    console.log('Added target="_self" to Rosary App link:', link.outerHTML);
+                });
+                tempDiv.querySelectorAll('a').forEach(link => {
+                    const href = link.getAttribute('href');
+                    console.log('Processing link:', href);
+                    if (href && baseUrl.includes('/trent;EAntirety of document.
