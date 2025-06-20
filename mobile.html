@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Holy Rosary - Mobile</title>
-    <link rel="icon" type="image/png" href="/images/png/favicon.png">
+    <link rel="icon" type="image/png" href="/images/png/favicon.ico">
     <link rel="stylesheet" href="https://fontlibrary.org/assets/fonts/analecta/8c7f0b7a8b8e7f8b7f8b7f8b7f8b7f8b/analecta.css" type="text/css"/>
     <link rel="stylesheet" href="https://fontlibrary.org/assets/fonts/rawline/9d8f0b7a8b8e7f8b7f8b7f8b7f8b7f8b/rawline.css" type="text/css"/>
     <style>
@@ -215,15 +215,14 @@
                     link.setAttribute('target', '_self');
                     console.log('Added target="_self" to Rosary App link:', link.outerHTML);
                 });
-                tempDiv.querySelectorAll('[style]:not(hr):not(select):not(button):not(input)').forEach(el => el.removeAttribute('style'));
-                if (baseUrl.includes('/trent/trent.html')) {
-                    tempDiv.querySelectorAll('a').forEach(link => {
-                        const href = link.getAttribute('href');
-                        if (href && !href.startsWith('http') && !href.startsWith('/') && !href.includes('/trent/')) {
-                            link.setAttribute('href', `/trent/${href}`);
-                        }
-                    });
-                }
+                tempDiv.querySelectorAll('a').forEach(link => {
+                    const href = link.getAttribute('href');
+                    console.log('Processing link:', href); // Debug
+                    if (href && baseUrl.includes('/trent/trent.html') && !href.startsWith('http') && !href.startsWith('/') && !href.includes('/trent/')) {
+                        link.setAttribute('href', `/trent/${href}`);
+                        console.log('Rewrote link to:', link.getAttribute('href')); // Debug
+                    }
+                });
                 return tempDiv.innerHTML;
             }
 
@@ -295,15 +294,16 @@
                         e.preventDefault();
                         const href = link.getAttribute('href');
                         const target = link.getAttribute('target');
-                        if (href && href.includes('/app/rosary.html') || target === '_self') {
+                        console.log('Clicked link:', href, 'Target:', target); // Debug
+                        if (href && (href.includes('/app/rosary.html') || target === '_self')) {
                             window.location.href = href;
                         } else if (href && href.startsWith('http')) {
                             window.open(href, '_blank');
                         } else if (href === '#' || href === '#top') {
                             window.scrollTo({ top: 0, behavior: 'smooth' });
                         } else if (href && href !== '#') {
-                            const baseUrl = window.location.origin;
-                            const resolvedUrl = href.startsWith('/') ? href : `/trent/${href}`;
+                            const resolvedUrl = href.startsWith('/') ? href : `/${href}`;
+                            console.log('Resolved URL:', resolvedUrl); // Debug
                             loadContent(resolvedUrl);
                         }
                     };
