@@ -113,7 +113,12 @@
             box-sizing: border-box;
         }
         .content hr {
-            visibility: hidden;
+            border-top: 1px solid oldlace; /* Visible lines like desktop */
+            margin: 10px 0;
+            height: 0;
+        }
+        .content hr[style*="visibility: hidden"] {
+            visibility: hidden; /* Keep hidden lines invisible */
             height: 20px;
             margin: 0;
             border: none;
@@ -173,7 +178,8 @@
                 if (br && br.tagName === 'BR') br.remove();
                 p.remove();
             });
-            tempDiv.querySelectorAll('[style]').forEach(el => el.removeAttribute('style'));
+            // Preserve hr inline styles for visibility: hidden
+            tempDiv.querySelectorAll('[style]:not(hr)').forEach(el => el.removeAttribute('style'));
             // Fix Catechism links if loading trent.html
             if (baseUrl.includes('/trent/trent.html')) {
                 tempDiv.querySelectorAll('a').forEach(link => {
@@ -212,14 +218,14 @@
         function attachMenuListeners() {
             const menuLinks = document.querySelectorAll('.nav-menu a');
             menuLinks.forEach(link => {
-                link.removeEventListener('click', link._handler); // Prevent duplicate listeners
+                link.removeEventListener('click', link._handler);
                 const handler = (e) => {
                     e.preventDefault();
                     const href = link.getAttribute('href');
                     const target = link.getAttribute('target');
                     if (href && href !== '#') {
                         if (target === '_self' || href.includes('/app/rosary.html')) {
-                            window.location.href = href; // Open Rosary App in same tab
+                            window.location.href = href;
                         } else if (target === '_blank') {
                             window.open(href, '_blank');
                             document.querySelector('.nav-menu').classList.remove('active');
@@ -238,12 +244,11 @@
         function attachContentLinkListeners() {
             const contentLinks = document.querySelectorAll('.content a');
             contentLinks.forEach(link => {
-                link.removeEventListener('click', link._handler); // Prevent duplicate listeners
+                link.removeEventListener('click', link._handler);
                 const handler = (e) => {
                     e.preventDefault();
                     const href = link.getAttribute('href');
                     if (href && !href.startsWith('http') && href !== '#') {
-                        // Resolve relative URLs
                         const baseUrl = window.location.origin;
                         const resolvedUrl = href.startsWith('/') ? href : `/trent/${href}`;
                         loadContent(resolvedUrl);
@@ -264,7 +269,7 @@
             { text: 'Rosary Guide', href: '/rosary_guide.html' },
             { text: 'Catechism', href: '/trent/trent.html' },
             { text: 'Rosary App', href: '/app/rosary.html', target: '_self' },
-            { text: 'Contact', href: 'https://Federation: form.jotform.com/210341816022138', target: '_blank' }
+            { text: 'Contact', href: 'https://form.jotform.com/210341816022138', target: '_blank' }
         ];
 
         // Fetch topnav from rosary.html
