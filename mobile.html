@@ -212,12 +212,24 @@
                         console.log('Removing existing button:', next.outerHTML);
                         next.remove();
                     }
+                    const existingButtons = select.parentElement.querySelectorAll('button, input[type="button"], input[type="submit"]');
+                    existingButtons.forEach(btn => {
+                        console.log('Removing additional button:', btn.outerHTML);
+                        btn.remove();
+                    });
                     const goButton = document.createElement('input');
                     goButton.type = 'button';
                     goButton.value = 'Go';
                     goButton.setAttribute('data-youtube-button', select.name);
-                    select.insertAdjacentElement('afterend', goButton);
+                    goButton.removeAttribute('onclick');
                     console.log('Injected Go button:', goButton.outerHTML);
+                    select.insertAdjacentElement('afterend', goButton);
+                });
+                tempDiv.querySelectorAll('button, input[type="button"], input[type="submit"]').forEach(btn => {
+                    if (btn.hasAttribute('onclick')) {
+                        console.log('Removed onclick from button:', btn.outerHTML);
+                        btn.removeAttribute('onclick');
+                    }
                 });
                 tempDiv.querySelectorAll('a[href="/app/rosary.html"]').forEach(link => {
                     link.setAttribute('target', '_self');
