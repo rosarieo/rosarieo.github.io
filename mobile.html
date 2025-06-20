@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Holy Rosary - Mobile</title>
     <link rel="icon" type="image/png" href="/images/png/favicon.png">
-    <link rel="stylesheet" href="https://fontlibrary.org/face/analecta" type="text/css"/>
-    <link rel="stylesheet" href="https://fontlibrary.org/face/rawline" type="text/css"/>
+    <link rel="stylesheet" href="https://fontlibrary.org/assets/fonts/analecta/8c7f0b7a8b8e7f8b7f8b7f8b7f8b7f8b/analecta.css" type="text/css"/>
+    <link rel="stylesheet" href="https://fontlibrary.org/assets/fonts/rawline/9d8f0b7a8b8e7f8b7f8b7f8b7f8b7f8b/rawline.css" type="text/css"/>
     <style>
         body {
             font-family: "RawlineRegular", "Century Gothic", "Apple Gothic", "URW Gothic L", "Avant Garde", sans-serif;
@@ -197,9 +197,21 @@
                     if (br && br.tagName === 'BR') br.remove();
                     p.remove();
                 });
-                tempDiv.querySelectorAll('button, input[type="button"]').forEach(el => {
-                    el.removeAttribute('onclick');
-                    console.log('Removed onclick from:', el);
+                tempDiv.querySelectorAll('select[name*="youtube" i], select[name*="Youtube" i], select[name*="YOUTUBE" i]').forEach(select => {
+                    console.log('Found YouTube select:', select.outerHTML, 'Parent:', select.parentElement.outerHTML); // Debug
+                    // Remove existing buttons/inputs
+                    const next = select.nextElementSibling;
+                    if (next && (next.tagName === 'BUTTON' || next.tagName === 'INPUT')) {
+                        console.log('Removing existing button:', next.outerHTML); // Debug
+                        next.remove();
+                    }
+                    // Inject new Go button
+                    const goButton = document.createElement('input');
+                    goButton.type = 'button';
+                    goButton.value = 'Go';
+                    goButton.setAttribute('data-youtube-button', select.name);
+                    select.insertAdjacentElement('afterend', goButton);
+                    console.log('Injected Go button:', goButton.outerHTML); // Debug
                 });
                 tempDiv.querySelectorAll('[style]:not(hr):not(select):not(button):not(input)').forEach(el => el.removeAttribute('style'));
                 if (baseUrl.includes('/trent/trent.html')) {
@@ -233,9 +245,13 @@
                         topLink.textContent = 'Top';
                         mainContent.appendChild(topLink);
                         attachContentLinkListeners();
-                        // Delay YouTube listeners to ensure DOM is ready
-                        setTimeout(attachYouTubeListeners, 0);
                         attachMenuListeners();
+                        // Use MutationObserver to ensure YouTube buttons are bound
+                        const observer = new MutationObserver(() => {
+                            attachYouTubeListeners();
+                            observer.disconnect();
+                        });
+                        observer.observe(mainContent, { childList: true, subtree: true });
                     })
                     .catch(error => {
                         console.error('Error fetching content:', error);
@@ -294,29 +310,29 @@
 
             // Function to attach YouTube button listeners
             function attachYouTubeListeners() {
-                const selectElements = document.querySelectorAll('.content select[name="youtube"], .content select[name*="youtube" i]');
-                selectElements.forEach(select => {
-                    console.log('Found YouTube select:', select.outerHTML); // Debug
-                    let button = select.nextElementSibling;
-                    if (!button || (button.tagName !== 'BUTTON' && button.tagName !== 'INPUT')) {
-                        // Search within parent or nearby
-                        button = select.parentElement.querySelector('button, input[type="button"]') ||
-                                 select.closest('p, div').querySelector('button, input[type="button"]');
-                    }
-                    if (button) {
-                        console.log('Found YouTube button:', button.outerHTML); // Debug
+                const buttons = document.querySelectorAll('.content input[data-youtube-button]');
+                console.log('Found YouTube buttons:', buttons.length); // Debug
+                buttons.forEach(button => {
+                    console.log('Binding YouTube button:', button.outerHTML); // Debug
+                    const selectName = button.getAttribute('data-youtube-button');
+                    const select = document.querySelector(`.content select[name="${selectName}"]`) ||
+                                   document.querySelector(`.content select[name="${selectName}" i]`);
+                    if (select) {
+                        console.log('Found associated select:', select.outerHTML); // Debug
                         button.removeEventListener('click', button._handler);
                         const handler = () => {
                             const url = select.value;
                             console.log('Opening YouTube URL:', url); // Debug
                             if (url && url.startsWith('http')) {
                                 window.open(url, '_blank');
+                            } else {
+                                console.log('Invalid or empty URL:', url); // Debug
                             }
                         };
                         button._handler = handler;
                         button.addEventListener('click', handler);
                     } else {
-                        console.log('No YouTube button found for select:', select.outerHTML); // Debug
+                        console.log('No select found for button:', button.outerHTML); // Debug
                     }
                 });
             }
