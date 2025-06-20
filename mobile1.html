@@ -238,7 +238,7 @@
             <p>Loading...</p>
         </div>
         <div class="lightbox" id="lightbox">
-            <span class="lightbox-close" id="lightbox-close">&times;</span>
+            <span class="lightbox-close" id="lightbox-close">×</span>
             <img id="lightbox-img" src="" alt="Enlarged Image">
         </div>
     </div>
@@ -263,11 +263,13 @@
                     link.setAttribute('href', '/latin.css');
                     console.log('Fixed stylesheet link:', link.outerHTML);
                 });
-                tempDiv.querySelectorAll('p > img[src="/images/png/prayinghands.png"]').forEach(img => {
-                    const p = img.parentElement;
-                    const br = p.nextElementSibling;
+                tempDiv.querySelectorAll('img[src*="prayinghands.png"]').forEach(img => {
+                    console.log('Found prayinghands image:', img.outerHTML);
+                    const parent = img.parentElement;
+                    const br = parent.nextElementSibling;
                     if (br && br.tagName === 'BR') br.remove();
-                    p.remove();
+                    parent.remove();
+                    console.log('Removed prayinghands image and parent:', parent.outerHTML);
                 });
                 tempDiv.querySelectorAll('select').forEach(select => {
                     console.log('Found select element:', select.outerHTML);
@@ -320,7 +322,6 @@
                         link.setAttribute('target', '');
                         console.log('Cleared target for link:', link.outerHTML);
                     }
-                    // Add data-lightbox attribute for rosary diagram links
                     if (href && href.includes('/images/jpg/prayrosary_updated.jpg')) {
                         link.setAttribute('data-lightbox', 'true');
                         link.removeAttribute('href');
@@ -403,21 +404,33 @@
                         const href = link.getAttribute('href');
                         const target = link.getAttribute('target');
                         const lightbox = link.getAttribute('data-lightbox');
-                        console.log('Clicked link:', href, 'Target:', target, 'Lightbox:', lightbox);
+                        console.log('Content link clicked:', href, 'Target:', target, 'Lightbox:', lightbox);
                         if (lightbox === 'true') {
-                            // Handled by lightbox listener
-                            return;
+                            return; // Handled by lightbox listener
                         }
-                        if (href && (href.includes('/app/rosary.html') || target === '_self')) {
+                        if (href && href.startsWith('#')) {
+                            const anchor = href.substring(1);
+                            const targetElement = document.getElementById(anchor) || document.querySelector(`[name="${anchor}"]`);
+                            console.log('Anchor link detected:', anchor, 'Target element:', targetElement);
+                            if (targetElement) {
+                                targetElement.scrollIntoView({ behavior: 'smooth' });
+                            } else {
+                                console.log('Anchor not found:', anchor);
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                            }
+                        } else if (href && (href.includes('/app/rosary.html') || target === '_self')) {
+                            console.log('Navigating to:', href);
                             window.location.href = href;
                         } else if (href && href.startsWith('http')) {
+                            console.log('Opening external link:', href);
                             window.open(href, '_blank');
-                        } else if (href === '#' || href === '#top') {
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
                         } else if (href && href !== '#') {
                             const resolvedUrl = href.startsWith('/') ? href : `/${href}`;
-                            console.log('Resolved URL:', resolvedUrl);
+                            console.log('Loading content:', resolvedUrl);
                             loadContent(resolvedUrl);
+                        } else {
+                            console.log('Scrolling to top for empty or # link');
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
                         }
                     };
                     link._handler = handler;
