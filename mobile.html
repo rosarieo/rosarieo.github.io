@@ -108,6 +108,11 @@
             margin-left: auto;
             margin-right: auto;
         }
+        .content img[src*="/images/jpg/prayrosary_updated.jpg"] {
+            min-width: 300px;
+            max-width: 90vw;
+            height: auto;
+        }
         .content audio, .content iframe, .content select, .content button, .content input[type="button"] {
             max-width: 100%;
             width: 100%;
@@ -148,6 +153,61 @@
             color: red;
             font-weight: bold;
         }
+        .youtube-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .youtube-card {
+            display: flex;
+            align-items: center;
+            background-color: #464b6d;
+            color: oldlace;
+            text-decoration: none;
+            padding: 10px;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+        }
+        .youtube-card:hover {
+            background-color: oldlace;
+            color: black;
+        }
+        .youtube-card img {
+            width: 120px;
+            height: 68px;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        .youtube-card span {
+            font-size: 1.1em;
+            font-family: "RawlineRegular", "Century Gothic", "Apple Gothic", "URW Gothic L", "Avant Garde", sans-serif;
+        }
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .lightbox img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 8px;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            color: oldlace;
+            font-size: 2em;
+            cursor: pointer;
+        }
         @media (min-width: 769px) {
             body::before {
                 content: "Please visit rosary.qzz.io on a mobile device for this view.";
@@ -177,6 +237,10 @@
         <div class="content" id="main-content">
             <p>Loading...</p>
         </div>
+        <div class="lightbox" id="lightbox">
+            <span class="lightbox-close" id="lightbox-close">×</span>
+            <img id="lightbox-img" src="" alt="Enlarged Image">
+        </div>
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -199,37 +263,49 @@
                     link.setAttribute('href', '/latin.css');
                     console.log('Fixed stylesheet link:', link.outerHTML);
                 });
-                tempDiv.querySelectorAll('p > img[src="/images/png/prayinghands.png"]').forEach(img => {
-                    const p = img.parentElement;
-                    const br = p.nextElementSibling;
+                tempDiv.querySelectorAll('img[src*="prayinghands.png"]').forEach(img => {
+                    console.log('Found prayinghands image:', img.outerHTML);
+                    const parent = img.parentElement;
+                    const br = parent.nextElementSibling;
                     if (br && br.tagName === 'BR') br.remove();
-                    p.remove();
+                    parent.remove();
+                    console.log('Removed prayinghands image and parent:', parent.outerHTML);
                 });
-                tempDiv.querySelectorAll('select[name*="youtube" i], select[name*="Youtube" i], select[name*="YOUTUBE" i]').forEach(select => {
-                    console.log('Found YouTube select:', select.outerHTML, 'Parent:', select.parentElement.outerHTML);
-                    const next = select.nextElementSibling;
-                    if (next && (next.tagName === 'BUTTON' || next.tagName === 'INPUT')) {
-                        console.log('Removing existing button:', next.outerHTML);
-                        next.remove();
+                tempDiv.querySelectorAll('select').forEach(select => {
+                    console.log('Found select element:', select.outerHTML);
+                    const options = select.querySelectorAll('option');
+                    const div = document.createElement('div');
+                    div.className = 'youtube-cards';
+                    if (options.length > 0) {
+                        options.forEach(option => {
+                            if (option.value && option.value.startsWith('http')) {
+                                const a = document.createElement('a');
+                                a.href = option.value;
+                                a.className = 'youtube-card';
+                                a.setAttribute('target', '_blank');
+                                const img = document.createElement('img');
+                                img.src = 'https://via.placeholder.com/120x68?text=Video';
+                                img.alt = 'Video Thumbnail';
+                                const span = document.createElement('span');
+                                span.textContent = option.textContent || 'YouTube Video';
+                                a.appendChild(img);
+                                a.appendChild(span);
+                                div.appendChild(a);
+                            }
+                        });
+                        console.log('Created YouTube cards:', div.outerHTML);
+                    } else {
+                        console.log('No valid options found in select:', select.outerHTML);
+                        const p = document.createElement('p');
+                        p.className = 'error-message';
+                        p.textContent = 'No YouTube videos available.';
+                        div.appendChild(p);
                     }
-                    const existingButtons = select.parentElement.querySelectorAll('button, input[type="button"], input[type="submit"]');
-                    existingButtons.forEach(btn => {
-                        console.log('Removing additional button:', btn.outerHTML);
-                        btn.remove();
-                    });
-                    const goButton = document.createElement('input');
-                    goButton.type = 'button';
-                    goButton.value = 'Go';
-                    goButton.setAttribute('data-youtube-button', select.name);
-                    goButton.removeAttribute('onclick');
-                    console.log('Injected Go button:', goButton.outerHTML);
-                    select.insertAdjacentElement('afterend', goButton);
+                    select.parentElement.replaceChild(div, select);
                 });
                 tempDiv.querySelectorAll('button, input[type="button"], input[type="submit"]').forEach(btn => {
-                    if (btn.hasAttribute('onclick')) {
-                        console.log('Removed onclick from button:', btn.outerHTML);
-                        btn.removeAttribute('onclick');
-                    }
+                    console.log('Removed button:', btn.outerHTML);
+                    btn.remove();
                 });
                 tempDiv.querySelectorAll('a[href="/app/rosary.html"]').forEach(link => {
                     link.setAttribute('target', '_self');
@@ -245,6 +321,11 @@
                     if (href && !href.startsWith('http') && !href.startsWith('#') && !href.includes('/app/rosary.html')) {
                         link.setAttribute('target', '');
                         console.log('Cleared target for link:', link.outerHTML);
+                    }
+                    if (href && href.includes('/images/jpg/prayrosary_updated.jpg')) {
+                        link.setAttribute('data-lightbox', 'true');
+                        link.removeAttribute('href');
+                        console.log('Added data-lightbox to rosary diagram:', link.outerHTML);
                     }
                 });
                 return tempDiv.innerHTML;
@@ -272,16 +353,10 @@
                         mainContent.appendChild(topLink);
                         attachContentLinkListeners();
                         attachMenuListeners();
-                        const observer = new MutationObserver(() => {
-                            attachYouTubeListeners();
-                            observer.disconnect();
-                        });
-                        observer.observe(mainContent, { childList: true, subtree: true });
-                        console.log('Scroll position before:', window.scrollY, mainContent.scrollTop);
+                        attachLightboxListeners();
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                         mainContent.scrollTo({ top: 0, behavior: 'smooth' });
                         console.log('Scroll position after:', window.scrollY, mainContent.scrollTop);
-                        console.log('Active element:', document.activeElement.outerHTML || 'None');
                     })
                     .catch(error => {
                         console.error('Error fetching content:', error);
@@ -321,24 +396,41 @@
 
             // Function to attach click listeners to content links
             function attachContentLinkListeners() {
-                const contentLinks = document.querySelectorAll('.content a:not(.top-link)');
+                const contentLinks = document.querySelectorAll('.content a:not(.top-link):not(.youtube-card)');
                 contentLinks.forEach(link => {
                     link.removeEventListener('click', link._handler);
                     const handler = (e) => {
                         e.preventDefault();
                         const href = link.getAttribute('href');
                         const target = link.getAttribute('target');
-                        console.log('Clicked link:', href, 'Target:', target);
-                        if (href && (href.includes('/app/rosary.html') || target === '_self')) {
+                        const lightbox = link.getAttribute('data-lightbox');
+                        console.log('Content link clicked:', href, 'Target:', target, 'Lightbox:', lightbox);
+                        if (lightbox === 'true') {
+                            return; // Handled by lightbox listener
+                        }
+                        if (href && href.startsWith('#')) {
+                            const anchor = href.substring(1);
+                            const targetElement = document.getElementById(anchor) || document.querySelector(`[name="${anchor}"]`);
+                            console.log('Anchor link detected:', anchor, 'Target element:', targetElement);
+                            if (targetElement) {
+                                targetElement.scrollIntoView({ behavior: 'smooth' });
+                            } else {
+                                console.log('Anchor not found:', anchor);
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                            }
+                        } else if (href && (href.includes('/app/rosary.html') || target === '_self')) {
+                            console.log('Navigating to:', href);
                             window.location.href = href;
                         } else if (href && href.startsWith('http')) {
+                            console.log('Opening external link:', href);
                             window.open(href, '_blank');
-                        } else if (href === '#' || href === '#top') {
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
                         } else if (href && href !== '#') {
                             const resolvedUrl = href.startsWith('/') ? href : `/${href}`;
-                            console.log('Resolved URL:', resolvedUrl);
+                            console.log('Loading content:', resolvedUrl);
                             loadContent(resolvedUrl);
+                        } else {
+                            console.log('Scrolling to top for empty or # link');
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
                         }
                     };
                     link._handler = handler;
@@ -346,31 +438,36 @@
                 });
             }
 
-            // Function to attach YouTube button listeners
-            function attachYouTubeListeners() {
-                const buttons = document.querySelectorAll('.content input[data-youtube-button]');
-                console.log('Found YouTube buttons:', buttons.length);
-                buttons.forEach(button => {
-                    console.log('Binding YouTube button:', button.outerHTML);
-                    const selectName = button.getAttribute('data-youtube-button');
-                    const select = document.querySelector(`.content select[name="${selectName}"]`) ||
-                                   document.querySelector(`.content select[name="${selectName}" i]`);
-                    if (select) {
-                        console.log('Found associated select:', select.outerHTML);
-                        button.removeEventListener('click', button._handler);
-                        const handler = () => {
-                            const url = select.value;
-                            console.log('Opening YouTube URL:', url);
-                            if (url && url.startsWith('http')) {
-                                window.open(url, '_blank');
-                            } else {
-                                console.log('Invalid or empty URL:', url);
-                            }
-                        };
-                        button._handler = handler;
-                        button.addEventListener('click', handler);
-                    } else {
-                        console.log('No select found for button:', button.outerHTML);
+            // Function to attach lightbox listeners
+            function attachLightboxListeners() {
+                const lightboxLinks = document.querySelectorAll('.content a[data-lightbox="true"]');
+                const lightbox = document.getElementById('lightbox');
+                const lightboxImg = document.getElementById('lightbox-img');
+                const lightboxClose = document.getElementById('lightbox-close');
+                lightboxLinks.forEach(link => {
+                    link.removeEventListener('click', link._handler);
+                    const handler = (e) => {
+                        e.preventDefault();
+                        const img = link.querySelector('img');
+                        if (img) {
+                            lightboxImg.src = img.src;
+                            lightbox.style.display = 'flex';
+                            console.log('Opened lightbox for:', img.src);
+                        }
+                    };
+                    link._handler = handler;
+                    link.addEventListener('click', handler);
+                });
+                lightboxClose.addEventListener('click', () => {
+                    lightbox.style.display = 'none';
+                    lightboxImg.src = '';
+                    console.log('Closed lightbox');
+                });
+                lightbox.addEventListener('click', (e) => {
+                    if (e.target === lightbox) {
+                        lightbox.style.display = 'none';
+                        lightboxImg.src = '';
+                        console.log('Closed lightbox by clicking outside');
                     }
                 });
             }
@@ -424,6 +521,7 @@
                         });
                         loadContent('/rosary.html');
                         attachMenuListeners();
+                        attachLightboxListeners();
                     } else {
                         throw new Error('Topnav not found');
                     }
@@ -444,6 +542,7 @@
                     document.getElementById('main-content').innerHTML = '<p class="error-message">Failed to load navigation. Using fallback menu.</p>';
                     loadContent('/rosary.html');
                     attachMenuListeners();
+                    attachLightboxListeners();
                 });
         });
     </script>
