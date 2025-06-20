@@ -8,7 +8,159 @@
     <link rel="stylesheet" href="https://fontlibrary.org/assets/fonts/analecta/8c7f0b7a8b8e7f8b7f8b7f8b7f8b7f8b/analecta.css" type="text/css"/>
     <link rel="stylesheet" href="https://fontlibrary.org/assets/fonts/rawline/9d8f0b7a8b8e7f8b7f8b7f8b7f8b7f8b/rawline.css" type="text/css"/>
     <style>
-        /* Existing styles remain unchanged */
+        body {
+            font-family: "RawlineRegular", "Century Gothic", "Apple Gothic", "URW Gothic L", "Avant Garde", sans-serif;
+            margin: 1.6em;
+            padding: 0;
+            background-color: #272a3d;
+            color: oldlace;
+        }
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 10px;
+        }
+        .header {
+            text-align: center;
+            padding: 10px;
+            background-color: #464b6d;
+            color: white;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 1.8em;
+            font-family: "AnalectaRegular", "Courier New", Courier, monospace;
+            color: #b1b5cd;
+        }
+        .nav-toggle {
+            display: block;
+            font-size: 1.5em;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+        .nav-menu {
+            display: none;
+            background-color: #464b6d;
+            padding: 10px;
+        }
+        .nav-menu.active {
+            display: block;
+        }
+        .nav-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .nav-menu li {
+            margin: 10px 0;
+        }
+        .nav-menu a {
+            color: oldlace;
+            text-decoration: none;
+            font-size: 1.5em;
+            font-family: "Muli", "Century Gothic", "Apple Gothic", "URW Gothic L", "Avant Garde", sans-serif;
+            display: block;
+            padding: 8px;
+        }
+        .nav-menu a:hover {
+            background-color: oldlace;
+            color: black;
+            border-radius: 4%;
+        }
+        .content {
+            padding: 20px;
+            background: #272a3d;
+            color: oldlace;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        .content a {
+            color: #b1b5cd;
+        }
+        .content a:hover {
+            background-color: oldlace;
+            color: black;
+            border-radius: 4%;
+        }
+        .content h1 {
+            font-family: "AnalectaRegular", "Courier New", Courier, monospace;
+            color: #b1b5cd;
+            font-size: 1.7em;
+        }
+        .content h2, .content h3 {
+            font-family: "RawlineRegular", "Century Gothic", "Apple Gothic", "URW Gothic L", "Avant Garde", sans-serif;
+            color: oldlace;
+            font-style: bold;
+            margin-top: 3em;
+        }
+        .content h3 {
+            font-size: 1.2em;
+        }
+        .content img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .content audio, .content iframe, .content select, .content button, .content input[type="button"] {
+            max-width: 100%;
+            width: 100%;
+            box-sizing: border-box;
+            margin: 5px 0;
+        }
+        .content hr {
+            border-top: 1px solid oldlace;
+            margin: 10px auto;
+            height: 0;
+            max-width: calc(100% - 40px);
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .content hr[style*="visibility: hidden"] {
+            visibility: hidden;
+            height: 20px;
+            margin: 0;
+            border: none;
+        }
+        .top-link {
+            display: block;
+            text-align: center;
+            color: #b1b5cd;
+            text-decoration: none;
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+        .top-link:hover {
+            background-color: oldlace;
+            color: black;
+            border-radius: 4%;
+        }
+        .rosary-section {
+            margin-bottom: 20px;
+        }
+        .error-message {
+            color: red;
+            font-weight: bold;
+        }
+        @media (min-width: 769px) {
+            body::before {
+                content: "Please visit rosary.qzz.io on a mobile device for this view.";
+                display: block;
+                text-align: center;
+                padding: 20px;
+                font-size: 1.5em;
+                background-color: #272a3d;
+            }
+            .container, .header, .nav-toggle, .nav-menu, .content {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -39,15 +191,22 @@
                 tempDiv.innerHTML = content.innerHTML;
 
                 // Remove all script tags to prevent execution of goToNewPage
-                tempDiv.querySelectorAll('script').forEach(script => script.remove());
+                tempDiv.querySelectorAll('script').forEach(script => {
+                    console.log('Removed script:', script.outerHTML);
+                    script.remove();
+                });
 
                 // Remove topnav and base tags
                 tempDiv.querySelectorAll('div.topnav').forEach(nav => nav.remove());
-                tempDiv.querySelectorAll('base').forEach(base => base.remove());
+                tempDiv.querySelectorAll('base').forEach(base => {
+                    console.log('Removed base tag:', base.outerHTML);
+                    base.remove();
+                });
 
                 // Fix stylesheet links
                 tempDiv.querySelectorAll('link[href="../latin.css"]').forEach(link => {
                     link.setAttribute('href', '/latin.css');
+                    console.log('Fixed stylesheet link:', link.outerHTML);
                 });
 
                 // Remove praying hands image and following <br>
@@ -59,31 +218,32 @@
                 });
 
                 // Handle YouTube dropdowns
-                tempDiv.querySelectorAll('select[name="Rosary"]').forEach(select => {
-                    // Check if this select contains YouTube URLs
-                    const hasYouTube = Array.from(select.querySelectorAll('option'))
-                        .some(option => option.value.startsWith('https://www.youtube.com'));
-                    if (hasYouTube) {
-                        console.log('Found YouTube select:', select.outerHTML);
-                        // Remove existing button if present
-                        const next = select.nextElementSibling;
-                        if (next && next.tagName === 'INPUT' && next.type === 'button') {
-                            console.log('Removing existing button:', next.outerHTML);
-                            next.remove();
-                        }
-                        // Inject new Go button
-                        const goButton = document.createElement('input');
-                        goButton.type = 'button';
-                        goButton.value = 'Go';
-                        goButton.classList.add('youtube-go-button');
-                        select.insertAdjacentElement('afterend', goButton);
-                        console.log('Injected Go button:', goButton.outerHTML);
+                tempDiv.querySelectorAll('select[name*="youtube" i], select[name*="Youtube" i], select[name*="YOUTUBE" i]').forEach(select => {
+                    console.log('Found YouTube select:', select.outerHTML);
+                    // Remove existing buttons
+                    const next = select.nextElementSibling;
+                    if (next && (next.tagName === 'BUTTON' || next.tagName === 'INPUT')) {
+                        console.log('Removing existing button:', next.outerHTML);
+                        next.remove();
                     }
+                    const existingButtons = select.parentElement.querySelectorAll('button, input[type="button"], input[type="submit"]');
+                    existingButtons.forEach(btn => {
+                        console.log('Removing additional button:', btn.outerHTML);
+                        btn.remove();
+                    });
+                    // Inject new Go button
+                    const goButton = document.createElement('input');
+                    goButton.type = 'button';
+                    goButton.value = 'Go';
+                    goButton.classList.add('youtube-go-button');
+                    select.insertAdjacentElement('afterend', goButton);
+                    console.log('Injected Go button:', goButton.outerHTML);
                 });
 
                 // Remove inline onclick attributes from all buttons
                 tempDiv.querySelectorAll('button, input[type="button"], input[type="submit"]').forEach(btn => {
                     if (btn.hasAttribute('onclick')) {
+                        console.log('Removed onclick from button:', btn.outerHTML);
                         btn.removeAttribute('onclick');
                     }
                 });
@@ -91,14 +251,18 @@
                 // Adjust links
                 tempDiv.querySelectorAll('a[href="/app/rosary.html"]').forEach(link => {
                     link.setAttribute('target', '_self');
+                    console.log('Added target="_self" to Rosary App link:', link.outerHTML);
                 });
                 tempDiv.querySelectorAll('a').forEach(link => {
                     const href = link.getAttribute('href');
+                    console.log('Processing link:', href);
                     if (href && baseUrl.includes('/trent/trent.html') && !href.startsWith('http') && !href.startsWith('/') && !href.includes('/trent/')) {
                         link.setAttribute('href', `/trent/${href}`);
+                        console.log('Rewrote link to:', link.getAttribute('href'));
                     }
                     if (href && !href.startsWith('http') && !href.startsWith('#') && !href.includes('/app/rosary.html')) {
                         link.setAttribute('target', '');
+                        console.log('Cleared target for link:', link.outerHTML);
                     }
                 });
 
@@ -128,29 +292,10 @@
                         topLink.textContent = 'Top';
                         mainContent.appendChild(topLink);
 
-                        // Attach existing listeners
+                        // Attach listeners
                         attachContentLinkListeners();
                         attachMenuListeners();
-
-                        // Attach YouTube button listeners
-                        const goButtons = mainContent.querySelectorAll('.youtube-go-button');
-                        console.log('Found YouTube buttons:', goButtons.length);
-                        goButtons.forEach(button => {
-                            const select = button.previousElementSibling;
-                            if (select && select.tagName === 'SELECT' && select.name === 'Rosary') {
-                                console.log('Attaching listener to button:', button.outerHTML);
-                                button.addEventListener('click', () => {
-                                    const url = select.value;
-                                    console.log('Opening URL:', url);
-                                    if (url && url.startsWith('http')) {
-                                        window.open(url, '_blank');
-                                        console.log('Opened URL in new tab');
-                                    } else {
-                                        console.log('Invalid URL:', url);
-                                    }
-                                });
-                            }
-                        });
+                        attachYouTubeListeners();
 
                         // Scroll to top
                         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -171,13 +316,17 @@
                         e.preventDefault();
                         const href = link.getAttribute('href');
                         const target = link.getAttribute('target');
+                        console.log('Menu link clicked:', href, 'Target:', target);
                         if (href && href !== '#') {
                             if (target === '_self' || href.includes('/app/rosary.html')) {
+                                console.log('Navigating to:', href);
                                 window.location.href = href;
                             } else if (target === '_blank') {
+                                console.log('Opening in new tab:', href);
                                 window.open(href, '_blank');
                                 document.querySelector('.nav-menu').classList.remove('active');
                             } else {
+                                console.log('Loading content in mobile view:', href);
                                 loadContent(href);
                                 document.querySelector('.nav-menu').classList.remove('active');
                             }
@@ -197,6 +346,7 @@
                         e.preventDefault();
                         const href = link.getAttribute('href');
                         const target = link.getAttribute('target');
+                        console.log('Clicked link:', href, 'Target:', target);
                         if (href && (href.includes('/app/rosary.html') || target === '_self')) {
                             window.location.href = href;
                         } else if (href && href.startsWith('http')) {
@@ -205,11 +355,40 @@
                             window.scrollTo({ top: 0, behavior: 'smooth' });
                         } else if (href && href !== '#') {
                             const resolvedUrl = href.startsWith('/') ? href : `/${href}`;
+                            console.log('Resolved URL:', resolvedUrl);
                             loadContent(resolvedUrl);
                         }
                     };
                     link._handler = handler;
                     link.addEventListener('click', handler);
+                });
+            }
+
+            // Function to attach YouTube button listeners
+            function attachYouTubeListeners() {
+                const buttons = document.querySelectorAll('.content .youtube-go-button');
+                console.log('Found YouTube buttons:', buttons.length);
+                buttons.forEach(button => {
+                    console.log('Binding YouTube button:', button.outerHTML);
+                    const select = button.previousElementSibling;
+                    if (select && select.tagName === 'SELECT' && select.name.toLowerCase().includes('youtube')) {
+                        console.log('Found associated select:', select.outerHTML);
+                        button.removeEventListener('click', button._handler);
+                        const handler = () => {
+                            const url = select.value;
+                            console.log('Opening YouTube URL:', url);
+                            if (url && url.startsWith('http')) {
+                                window.open(url, '_blank');
+                                console.log('Opened URL in new tab');
+                            } else {
+                                console.log('Invalid or empty URL:', url);
+                            }
+                        };
+                        button._handler = handler;
+                        button.addEventListener('click', handler);
+                    } else {
+                        console.log('No valid select found for button:', button.outerHTML);
+                    }
                 });
             }
 
@@ -224,7 +403,7 @@
                 { text: 'Contact', href: 'https://form.jotform.com/210341816022138', target: '_blank' }
             ];
 
-            // Fetch topnav and initialize
+            // Fetch topnav from rosary.html
             fetch('/rosary.html')
                 .then(response => {
                     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
@@ -235,6 +414,7 @@
                     const doc = parser.parseFromString(data, 'text/html');
                     const topnav = doc.querySelector('div.topnav');
                     const navLinks = document.getElementById('nav-links');
+
                     if (topnav) {
                         const links = topnav.querySelectorAll('a');
                         navLinks.innerHTML = '';
