@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Holy Rosary - Mobile</title>
+    <link rel="icon" type="image/png" href="/images/png/favicon.png">
     <link rel="stylesheet" href="https://fontlibrary.org/face/analecta" type="text/css"/>
     <link rel="stylesheet" href="https://fontlibrary.org/face/rawline" type="text/css"/>
     <style>
@@ -196,11 +197,13 @@
                     if (br && br.tagName === 'BR') br.remove();
                     p.remove();
                 });
-                tempDiv.querySelectorAll('p > img[src*="/images/holy_fathers/"]').forEach(img => {
-                    const p = img.parentElement;
-                    const br = p.nextElementSibling;
+                tempDiv.querySelectorAll('img[src*="/images/holy_fathers/"]').forEach(img => {
+                    console.log('Removing image:', img.src); // Debug
+                    const parent = img.parentElement;
+                    const br = img.nextElementSibling;
                     if (br && br.tagName === 'BR') br.remove();
-                    p.remove();
+                    if (parent.tagName === 'P') parent.remove();
+                    else img.remove();
                 });
                 tempDiv.querySelectorAll('[style]:not(hr):not(select):not(button)').forEach(el => el.removeAttribute('style'));
                 if (baseUrl.includes('/trent/trent.html')) {
@@ -216,7 +219,9 @@
 
             // Function to load content from a URL
             function loadContent(url) {
-                fetch(url)
+                // Strip fragments from URL
+                const cleanUrl = url.split('#')[0];
+                fetch(cleanUrl)
                     .then(response => {
                         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
                         return response.text();
@@ -226,7 +231,7 @@
                         const doc = parser.parseFromString(data, 'text/html');
                         const content = doc.querySelector('body') || doc.body;
                         const mainContent = document.getElementById('main-content');
-                        mainContent.innerHTML = cleanContent(content, url);
+                        mainContent.innerHTML = cleanContent(content, cleanUrl);
                         const topLink = document.createElement('a');
                         topLink.href = '#';
                         topLink.className = 'top-link';
@@ -276,14 +281,14 @@
                     const handler = (e) => {
                         e.preventDefault();
                         const href = link.getAttribute('href');
-                        if (href && !href.startsWith('http') && href !== '#') {
+                        if (href && href.startsWith('http')) {
+                            window.open(href, '_blank');
+                        } else if (href === '#' || href === '#top') {
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                        } else if (href && href !== '#') {
                             const baseUrl = window.location.origin;
                             const resolvedUrl = href.startsWith('/') ? href : `/trent/${href}`;
                             loadContent(resolvedUrl);
-                        } else if (href && href.startsWith('http')) {
-                            window.open(href, '_blank');
-                        } else if (href === '#') {
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
                         }
                     };
                     link._handler = handler;
