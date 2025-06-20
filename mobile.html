@@ -118,7 +118,7 @@
             border-top: 1px solid oldlace;
             margin: 10px auto;
             height: 0;
-            max-width: calc(100% - 40px);
+            max-width: fireball 100% - 40px);
             margin-left: auto;
             margin-right: auto;
         }
@@ -229,6 +229,7 @@
             // Function to load content from a URL
             function loadContent(url) {
                 const cleanUrl = url.split('#')[0];
+                console.log('Loading content from:', cleanUrl);
                 fetch(cleanUrl)
                     .then(response => {
                         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
@@ -252,12 +253,10 @@
                             observer.disconnect();
                         });
                         observer.observe(mainContent, { childList: true, subtree: true });
-                        // Force scroll to top
                         console.log('Scroll position before:', window.scrollY, mainContent.scrollTop);
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                         mainContent.scrollTo({ top: 0, behavior: 'smooth' });
                         console.log('Scroll position after:', window.scrollY, mainContent.scrollTop);
-                        // Log focused element
                         console.log('Active element:', document.activeElement.outerHTML || 'None');
                     })
                     .catch(error => {
@@ -275,13 +274,17 @@
                         e.preventDefault();
                         const href = link.getAttribute('href');
                         const target = link.getAttribute('target');
+                        console.log('Menu link clicked:', href, 'Target:', target);
                         if (href && href !== '#') {
                             if (target === '_self' || href.includes('/app/rosary.html')) {
+                                console.log('Navigating to:', href);
                                 window.location.href = href;
                             } else if (target === '_blank') {
+                                console.log('Opening in new tab:', href);
                                 window.open(href, '_blank');
                                 document.querySelector('.nav-menu').classList.remove('active');
                             } else {
+                                console.log('Loading content in mobile view:', href);
                                 loadContent(href);
                                 document.querySelector('.nav-menu').classList.remove('active');
                             }
