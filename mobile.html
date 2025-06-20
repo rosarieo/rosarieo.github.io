@@ -179,6 +179,12 @@
         </div>
     </div>
     <script>
+
+window.goToNewPage = function() {
+  console.log("goToNewPage triggered!");
+  // Your navigation logic here, e.g., window.location.href = "somepage.html";
+};
+
         document.addEventListener('DOMContentLoaded', () => {
             // Toggle mobile menu
             document.querySelector('.nav-toggle').addEventListener('click', () => {
@@ -240,13 +246,13 @@
                     console.log('Injected Go button:', goButton.outerHTML);
                 });
 
-                // Remove inline onclick attributes from all buttons
-                tempDiv.querySelectorAll('button, input[type="button"], input[type="submit"]').forEach(btn => {
-                    if (btn.hasAttribute('onclick')) {
-                        console.log('Removed onclick from button:', btn.outerHTML);
-                        btn.removeAttribute('onclick');
-                    }
-                });
+<input type="button" value="Go" id="goButton" style="font-size: 1em">
+<script>
+  document.getElementById('goButton').addEventListener('click', function() {
+    console.log("Button clicked!");
+    goToNewPage();
+  });
+</script>
 
                 // Adjust links
                 tempDiv.querySelectorAll('a[href="/app/rosary.html"]').forEach(link => {
