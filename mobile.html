@@ -179,11 +179,6 @@
         </div>
     </div>
     <script>
-        window.goToNewPage = function() {
-            console.log("goToNewPage triggered!");
-            // Add specific navigation logic here if needed
-        };
-
         document.addEventListener('DOMContentLoaded', () => {
             // Toggle mobile menu
             document.querySelector('.nav-toggle').addEventListener('click', () => {
@@ -194,38 +189,24 @@
             function cleanContent(content, baseUrl) {
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = content.innerHTML;
-
-                // Remove all script tags to prevent execution
-                tempDiv.querySelectorAll('script').forEach(script => {
-                    console.log('Removed script:', script.outerHTML);
-                    script.remove();
-                });
-
-                // Remove topnav and base tags
+                tempDiv.querySelectorAll('script').forEach(script => script.remove());
                 tempDiv.querySelectorAll('div.topnav').forEach(nav => nav.remove());
                 tempDiv.querySelectorAll('base').forEach(base => {
                     console.log('Removed base tag:', base.outerHTML);
                     base.remove();
                 });
-
-                // Fix stylesheet links
                 tempDiv.querySelectorAll('link[href="../latin.css"]').forEach(link => {
                     link.setAttribute('href', '/latin.css');
                     console.log('Fixed stylesheet link:', link.outerHTML);
                 });
-
-                // Remove praying hands image and following <br>
                 tempDiv.querySelectorAll('p > img[src="/images/png/prayinghands.png"]').forEach(img => {
                     const p = img.parentElement;
                     const br = p.nextElementSibling;
                     if (br && br.tagName === 'BR') br.remove();
                     p.remove();
                 });
-
-                // Handle YouTube dropdowns
                 tempDiv.querySelectorAll('select[name*="youtube" i], select[name*="Youtube" i], select[name*="YOUTUBE" i]').forEach(select => {
-                    console.log('Found YouTube select:', select.outerHTML);
-                    // Remove existing buttons
+                    console.log('Found YouTube select:', select.outerHTML, 'Parent:', select.parentElement.outerHTML);
                     const next = select.nextElementSibling;
                     if (next && (next.tagName === 'BUTTON' || next.tagName === 'INPUT')) {
                         console.log('Removing existing button:', next.outerHTML);
@@ -236,17 +217,20 @@
                         console.log('Removing additional button:', btn.outerHTML);
                         btn.remove();
                     });
-                    // Inject new Go button
                     const goButton = document.createElement('input');
                     goButton.type = 'button';
                     goButton.value = 'Go';
-                    goButton.classList.add('youtube-go-button');
-                    goButton.style.fontSize = '1em';
-                    select.insertAdjacentElement('afterend', goButton);
+                    goButton.setAttribute('data-youtube-button', select.name);
+                    goButton.removeAttribute('onclick');
                     console.log('Injected Go button:', goButton.outerHTML);
+                    select.insertAdjacentElement('afterend', goButton);
                 });
-
-                // Adjust links
+                tempDiv.querySelectorAll('button, input[type="button"], input[type="submit"]').forEach(btn => {
+                    if (btn.hasAttribute('onclick')) {
+                        console.log('Removed onclick from button:', btn.outerHTML);
+                        btn.removeAttribute('onclick');
+                    }
+                });
                 tempDiv.querySelectorAll('a[href="/app/rosary.html"]').forEach(link => {
                     link.setAttribute('target', '_self');
                     console.log('Added target="_self" to Rosary App link:', link.outerHTML);
@@ -263,7 +247,6 @@
                         console.log('Cleared target for link:', link.outerHTML);
                     }
                 });
-
                 return tempDiv.innerHTML;
             }
 
@@ -273,45 +256,35 @@
                 console.log('Loading content from:', cleanUrl);
                 fetch(cleanUrl)
                     .then(response => {
-                        if (!response.ok) {
-                            console.error('Fetch failed with status:', response.status, 'for URL:', cleanUrl);
-                            throw new Error(`HTTP error! Status: ${response.status}`);
-                        }
+                        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
                         return response.text();
                     })
                     .then(data => {
                         const parser = new DOMParser();
                         const doc = parser.parseFromString(data, 'text/html');
-                        if (!doc) {
-                            console.error('Failed to parse HTML from:', cleanUrl);
-                            throw new Error('Invalid HTML content');
-                        }
                         const content = doc.querySelector('body') || doc.body;
-                        if (!content) {
-                            console.error('No body content found in:', cleanUrl);
-                            throw new Error('No body content in response');
-                        }
                         const mainContent = document.getElementById('main-content');
                         mainContent.innerHTML = cleanContent(content, cleanUrl);
-
-                        // Add top link
                         const topLink = document.createElement('a');
                         topLink.href = '#';
                         topLink.className = 'top-link';
                         topLink.textContent = 'Top';
                         mainContent.appendChild(topLink);
-
-                        // Attach listeners
                         attachContentLinkListeners();
                         attachMenuListeners();
-                        attachYouTubeListeners();
-
-                        // Scroll to top
+                        const observer = new MutationObserver(() => {
+                            attachYouTubeListeners();
+                            observer.disconnect();
+                        });
+                        observer.observe(mainContent, { childList: true, subtree: true });
+                        console.log('Scroll position before:', window.scrollY, mainContent.scrollTop);
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                         mainContent.scrollTo({ top: 0, behavior: 'smooth' });
+                        console.log('Scroll position after:', window.scrollY, mainContent.scrollTop);
+                        console.log('Active element:', document.activeElement.outerHTML || 'None');
                     })
                     .catch(error => {
-                        console.error('Error fetching content:', error.message, 'for URL:', cleanUrl);
+                        console.error('Error fetching content:', error);
                         document.getElementById('main-content').innerHTML = '<p class="error-message">Failed to load content. Check your connection or try again later.</p>';
                     });
             }
@@ -375,12 +348,14 @@
 
             // Function to attach YouTube button listeners
             function attachYouTubeListeners() {
-                const buttons = document.querySelectorAll('.content .youtube-go-button');
+                const buttons = document.querySelectorAll('.content input[data-youtube-button]');
                 console.log('Found YouTube buttons:', buttons.length);
                 buttons.forEach(button => {
                     console.log('Binding YouTube button:', button.outerHTML);
-                    const select = button.previousElementSibling;
-                    if (select && select.tagName === 'SELECT' && select.name.toLowerCase().includes('youtube')) {
+                    const selectName = button.getAttribute('data-youtube-button');
+                    const select = document.querySelector(`.content select[name="${selectName}"]`) ||
+                                   document.querySelector(`.content select[name="${selectName}" i]`);
+                    if (select) {
                         console.log('Found associated select:', select.outerHTML);
                         button.removeEventListener('click', button._handler);
                         const handler = () => {
@@ -388,7 +363,6 @@
                             console.log('Opening YouTube URL:', url);
                             if (url && url.startsWith('http')) {
                                 window.open(url, '_blank');
-                                console.log('Opened URL in new tab');
                             } else {
                                 console.log('Invalid or empty URL:', url);
                             }
@@ -396,7 +370,7 @@
                         button._handler = handler;
                         button.addEventListener('click', handler);
                     } else {
-                        console.log('No valid select found for button:', button.outerHTML);
+                        console.log('No select found for button:', button.outerHTML);
                     }
                 });
             }
@@ -415,19 +389,12 @@
             // Fetch topnav from rosary.html
             fetch('/rosary.html')
                 .then(response => {
-                    if (!response.ok) {
-                        console.error('Fetch topnav failed with status:', response.status);
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
                     return response.text();
                 })
                 .then(data => {
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(data, 'text/html');
-                    if (!doc) {
-                        console.error('Failed to parse topnav HTML');
-                        throw new Error('Invalid topnav HTML');
-                    }
                     const topnav = doc.querySelector('div.topnav');
                     const navLinks = document.getElementById('nav-links');
 
@@ -462,7 +429,7 @@
                     }
                 })
                 .catch(error => {
-                    console.error('Error fetching topnav:', error.message);
+                    console.error('Error fetching topnav:', error);
                     const navLinks = document.getElementById('nav-links');
                     navLinks.innerHTML = '';
                     fallbackMenu.forEach(item => {
@@ -478,15 +445,6 @@
                     loadContent('/rosary.html');
                     attachMenuListeners();
                 });
-
-            // Add Go button listener for any static Go buttons
-            const goButton = document.querySelector('#goButton');
-            if (goButton) {
-                goButton.addEventListener('click', () => {
-                    console.log("Button clicked!");
-                    goToNewPage();
-                });
-            }
         });
     </script>
 </body>
