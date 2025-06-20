@@ -108,6 +108,11 @@
             margin-left: auto;
             margin-right: auto;
         }
+        .content img[src*="/images/jpg/prayrosary_updated.jpg"] {
+            min-width: 300px;
+            max-width: 90vw;
+            height: auto;
+        }
         .content audio, .content iframe, .content select, .content button, .content input[type="button"] {
             max-width: 100%;
             width: 100%;
@@ -156,9 +161,7 @@
         }
         .youtube-card {
             display: flex;
-            align —
-
-System: items: center;
+            align-items: center;
             background-color: #464b6d;
             color: oldlace;
             text-decoration: none;
@@ -179,6 +182,31 @@ System: items: center;
         .youtube-card span {
             font-size: 1.1em;
             font-family: "RawlineRegular", "Century Gothic", "Apple Gothic", "URW Gothic L", "Avant Garde", sans-serif;
+        }
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .lightbox img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 8px;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            color: oldlace;
+            font-size: 2em;
+            cursor: pointer;
         }
         @media (min-width: 769px) {
             body::before {
@@ -208,6 +236,10 @@ System: items: center;
     <div class="container">
         <div class="content" id="main-content">
             <p>Loading...</p>
+        </div>
+        <div class="lightbox" id="lightbox">
+            <span class="lightbox-close" id="lightbox-close">&times;</span>
+            <img id="lightbox-img" src="" alt="Enlarged Image">
         </div>
     </div>
     <script>
@@ -250,7 +282,6 @@ System: items: center;
                                 a.className = 'youtube-card';
                                 a.setAttribute('target', '_blank');
                                 const img = document.createElement('img');
-                                // Placeholder thumbnail; replace with YouTube thumbnail if available
                                 img.src = 'https://via.placeholder.com/120x68?text=Video';
                                 img.alt = 'Video Thumbnail';
                                 const span = document.createElement('span');
@@ -289,6 +320,12 @@ System: items: center;
                         link.setAttribute('target', '');
                         console.log('Cleared target for link:', link.outerHTML);
                     }
+                    // Add data-lightbox attribute for rosary diagram links
+                    if (href && href.includes('/images/jpg/prayrosary_updated.jpg')) {
+                        link.setAttribute('data-lightbox', 'true');
+                        link.removeAttribute('href');
+                        console.log('Added data-lightbox to rosary diagram:', link.outerHTML);
+                    }
                 });
                 return tempDiv.innerHTML;
             }
@@ -315,6 +352,7 @@ System: items: center;
                         mainContent.appendChild(topLink);
                         attachContentLinkListeners();
                         attachMenuListeners();
+                        attachLightboxListeners();
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                         mainContent.scrollTo({ top: 0, behavior: 'smooth' });
                         console.log('Scroll position after:', window.scrollY, mainContent.scrollTop);
@@ -364,7 +402,12 @@ System: items: center;
                         e.preventDefault();
                         const href = link.getAttribute('href');
                         const target = link.getAttribute('target');
-                        console.log('Clicked link:', href, 'Target:', target);
+                        const lightbox = link.getAttribute('data-lightbox');
+                        console.log('Clicked link:', href, 'Target:', target, 'Lightbox:', lightbox);
+                        if (lightbox === 'true') {
+                            // Handled by lightbox listener
+                            return;
+                        }
                         if (href && (href.includes('/app/rosary.html') || target === '_self')) {
                             window.location.href = href;
                         } else if (href && href.startsWith('http')) {
@@ -379,6 +422,40 @@ System: items: center;
                     };
                     link._handler = handler;
                     link.addEventListener('click', handler);
+                });
+            }
+
+            // Function to attach lightbox listeners
+            function attachLightboxListeners() {
+                const lightboxLinks = document.querySelectorAll('.content a[data-lightbox="true"]');
+                const lightbox = document.getElementById('lightbox');
+                const lightboxImg = document.getElementById('lightbox-img');
+                const lightboxClose = document.getElementById('lightbox-close');
+                lightboxLinks.forEach(link => {
+                    link.removeEventListener('click', link._handler);
+                    const handler = (e) => {
+                        e.preventDefault();
+                        const img = link.querySelector('img');
+                        if (img) {
+                            lightboxImg.src = img.src;
+                            lightbox.style.display = 'flex';
+                            console.log('Opened lightbox for:', img.src);
+                        }
+                    };
+                    link._handler = handler;
+                    link.addEventListener('click', handler);
+                });
+                lightboxClose.addEventListener('click', () => {
+                    lightbox.style.display = 'none';
+                    lightboxImg.src = '';
+                    console.log('Closed lightbox');
+                });
+                lightbox.addEventListener('click', (e) => {
+                    if (e.target === lightbox) {
+                        lightbox.style.display = 'none';
+                        lightboxImg.src = '';
+                        console.log('Closed lightbox by clicking outside');
+                    }
                 });
             }
 
@@ -431,6 +508,7 @@ System: items: center;
                         });
                         loadContent('/rosary.html');
                         attachMenuListeners();
+                        attachLightboxListeners();
                     } else {
                         throw new Error('Topnav not found');
                     }
@@ -451,6 +529,7 @@ System: items: center;
                     document.getElementById('main-content').innerHTML = '<p class="error-message">Failed to load navigation. Using fallback menu.</p>';
                     loadContent('/rosary.html');
                     attachMenuListeners();
+                    attachLightboxListeners();
                 });
         });
     </script>
