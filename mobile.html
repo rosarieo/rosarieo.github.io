@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Holy Rosary - Mobile</title>
+    <link rel="stylesheet" href="https://fontlibrary.org/face/analecta" type="text/css"/>
+    <link rel="stylesheet" href="https://fontlibrary.org/face/rawline" type="text/css"/>
+    <style>
+        body {
+            font-family: "RawlineRegular", "Century Gothic", "Apple Gothic", "URW Gothic L", "Avant Garde", sans-serif;
+            margin: 1.6em;
+            padding: 0;
+            background-color: #272a3d;
+            color: oldlace;
+        }
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 10px;
+        }
+        .header {
+            text-align: center;
+            padding: 10px;
+            background-color: #464b6d;
+            color: white;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 1.8em;
+            font-family: "AnalectaRegular", Courier;
+            color: #b1b5cd;
+        }
+        .nav-toggle {
+            display: block;
+            font-size: 1.5em;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+        .nav-menu {
+            display: none;
+            background-color: #464b6d;
+            padding: 10px;
+        }
+        .nav-menu.active {
+            display: block;
+        }
+        .nav-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .nav-menu li {
+            margin: 10px 0;
+        }
+        .nav-menu a {
+            color: oldlace;
+            text-decoration: none;
+            font-size: 1.5em;
+            font-family: Muli, "Century Gothic", "Apple Gothic", "URW Gothic L", "Avant Garde", sans-serif;
+            display: block;
+            padding: 8px;
+        }
+        .nav-menu a:hover {
+            background-color: oldlace;
+            color: black;
+            border-radius: 4%;
+        }
+        .content {
+            padding: 20px;
+            background: #272a3d;
+            color: oldlace;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        .content a {
+            color: #b1b5cd;
+        }
+        .content a:hover {
+            background-color: oldlace;
+            color: black;
+            border-radius: 4%;
+        }
+        .content h1 {
+            font-family: "AnalectaRegular", Courier;
+            color: #b1b5cd;
+            font-size: 1.7em;
+        }
+        .content h2, .content h3 {
+            font-family: "RawlineRegular", "Century Gothic", "Apple Gothic", "URW Gothic L", "Avant Garde", sans-serif;
+            color: oldlace;
+            font-style: bold;
+            margin-top: 3em;
+        }
+        .content h3 {
+            font-size: 1.2em;
+        }
+        .content img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .content audio, .content iframe, .content select {
+            max-width: 100%;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .content hr {
+            border-top: 1px solid oldlace;
+            margin: 10px auto;
+            height: 0;
+            max-width: calc(100% - 40px); /* Match header width */
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .content hr[style*="visibility: hidden"] {
+            visibility: hidden;
+            height: 20px;
+            margin: 0;
+            border: none;
+        }
+        .rosary-section {
+            margin-bottom: 20px;
+        }
+        .error-message {
+            color: red;
+            font-weight: bold;
+        }
+        @media (min-width: 769px) {
+            body::before {
+                content: "Please visit rosary.qzz.io on a mobile device for this view.";
+                display: block;
+                text-align: center;
+                padding: 20px;
+                font-size: 1.5em;
+                background-color: #272a3d;
+            }
+            .container, .header, .nav-toggle, .nav-menu, .content {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="nav-toggle">☰</button>
+        <h1>The Holy Rosary</h1>
+        <div class="nav-menu">
+            <ul id="nav-links">
+                <!-- Navigation links populated dynamically -->
+            </ul>
+        </div>
+    </div>
+    <div class="container">
+        <div class="content" id="main-content">
+            <p>Loading...</p>
+        </div>
+    </div>
+    <script>
+        // Toggle mobile menu
+        document.querySelector('.nav-toggle').addEventListener('click', () => {
+            document.querySelector('.nav-menu').classList.toggle('active');
+        });
+
+        // Function to clean and fix content
+        function cleanContent(content, baseUrl) {
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = content.innerHTML;
+            tempDiv.querySelectorAll('script').forEach(script => script.remove());
+            tempDiv.querySelectorAll('div.topnav').forEach(nav => nav.remove());
+            tempDiv.querySelectorAll('p > img[src="/images/png/prayinghands.png"]').forEach(img => {
+                const p = img.parentElement;
+                const br = p.nextElementSibling;
+                if (br && br.tagName === 'BR') br.remove();
+                p.remove();
+            });
+            tempDiv.querySelectorAll('[style]:not(hr)').forEach(el => el.removeAttribute('style'));
+            if (baseUrl.includes('/trent/trent.html')) {
+                tempDiv.querySelectorAll('a').forEach(link => {
+                    const href = link.getAttribute('href');
+                    if (href && !href.startsWith('http') && !href.startsWith('/') && !href.includes('/trent/')) {
+                        link.setAttribute('href', `/trent/${href}`);
+                    }
+                });
+            }
+            return tempDiv.innerHTML;
+        }
+
+        // Function to load content from a URL
+        function loadContent(url) {
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                    return response.text();
+                })
+                .then(data => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(data, 'text/html');
+                    const content = doc.querySelector('body') || doc.body;
+                    const mainContent = document.getElementById('main-content');
+                    mainContent.innerHTML = cleanContent(content, url);
+                    attachContentLinkListeners();
+                    attachMenuListeners();
+                })
+                .catch(error => {
+                    console.error('Error fetching content:', error);
+                    document.getElementById('main-content').innerHTML = '<p class="error-message">Failed to load content. Check your connection or try again later.</p>';
+                });
+        }
+
+        // Function to attach click listeners to menu links
+        function attachMenuListeners() {
+            const menuLinks = document.querySelectorAll('.nav-menu a');
+            menuLinks.forEach(link => {
+                link.removeEventListener('click', link._handler);
+                const handler = (e) => {
+                    e.preventDefault();
+                    const href = link.getAttribute('href');
+                    const target = link.getAttribute('target');
+                    if (href && href !== '#') {
+                        if (target === '_self' || href.includes('/app/rosary.html')) {
+                            window.location.href = href;
+                        } else if (target === '_blank') {
+                            window.open(href, '_blank');
+                            document.querySelector('.nav-menu').classList.remove('active');
+                        } else {
+                            loadContent(href);
+                            document.querySelector('.nav-menu').classList.remove('active');
+                        }
+                    }
+                };
+                link._handler = handler;
+                link.addEventListener('click', handler);
+            });
+        }
+
+        // Function to attach click listeners to content links
+        function attachContentLinkListeners() {
+            const contentLinks = document.querySelectorAll('.content a');
+            contentLinks.forEach(link => {
+                link.removeEventListener('click', link._handler);
+                const handler = (e) => {
+                    e.preventDefault();
+                    const href = link.getAttribute('href');
+                    if (href && !href.startsWith('http') && href !== '#') {
+                        const baseUrl = window.location.origin;
+                        const resolvedUrl = href.startsWith('/') ? href : `/trent/${href}`;
+                        loadContent(resolvedUrl);
+                    } else if (href && href.startsWith('http')) {
+                        window.open(href, '_blank');
+                    }
+                };
+                link._handler = handler;
+                link.addEventListener('click', handler);
+            });
+        }
+
+        // Fallback menu
+        const fallbackMenu = [
+            { text: 'English Rosary', href: '/rosary.html' },
+            { text: 'Latin Rosary', href: '/latin.html' },
+            { text: 'Mysteries', href: '/mysteries.html' },
+            { text: 'Rosary Guide', href: '/rosary_guide.html' },
+            { text: 'Catechism', href: '/trent/trent.html' },
+            { text: 'Rosary App', href: '/app/rosary.html', target: '_self' },
+            { text: 'Contact', href: 'https://form.jotform.com/210341816022138', target: '_blank' }
+        ];
+
+        // Fetch topnav from rosary.html
+        fetch('/rosary.html')
+            .then(response => {
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                return response.text();
+            })
+            .then(data => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(data, 'text/html');
+                const topnav = doc.querySelector('div.topnav');
+                const navLinks = document.getElementById('nav-links');
+
+                if (topnav) {
+                    const links = topnav.querySelectorAll('a');
+                    navLinks.innerHTML = '';
+                    links.forEach(link => {
+                        const li = document.createElement('li');
+                        const a = document.createElement('a');
+                        a.href = link.href.includes('http') ? link.href : '/' + link.href.replace(/^\//, '');
+                        a.textContent = link.textContent.trim();
+                        li.appendChild(a);
+                        navLinks.appendChild(li);
+                    });
+                    const customLinks = [
+                        { text: 'Rosary App', href: '/app/rosary.html', target: '_self' },
+                        { text: 'Contact', href: 'https://form.jotform.com/210341816022138', target: '_blank' }
+                    ];
+                    customLinks.forEach(item => {
+                        const li = document.createElement('li');
+                        const a = document.createElement('a');
+                        a.href = item.href;
+                        a.textContent = item.text;
+                        if (item.target) a.setAttribute('target', item.target);
+                        li.appendChild(a);
+                        navLinks.appendChild(li);
+                    });
+                    loadContent('/rosary.html');
+                    attachMenuListeners();
+                } else {
+                    throw new Error('Topnav not found');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching topnav:', error);
+                const navLinks = document.getElementById('nav-links');
+                navLinks.innerHTML = '';
+                fallbackMenu.forEach(item => {
+                    const li = document.createElement('li');
+                    const a = document.createElement('a');
+                    a.href = item.href;
+                    a.textContent = item.text;
+                    if (item.target) a.setAttribute('target', item.target);
+                    li.appendChild(a);
+                    navLinks.appendChild(li);
+                });
+                document.getElementById('main-content').innerHTML = '<p class="error-message">Failed to load navigation. Using fallback menu.</p>';
+                loadContent('/rosary.html');
+                attachMenuListeners();
+            });
+    </script>
+</body>
+</html>
