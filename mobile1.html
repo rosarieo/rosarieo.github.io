@@ -125,7 +125,7 @@
         .content hr[style*="visibility: hidden"] {
             visibility: hidden;
             height: 20px;
-            marginii: 0;
+            margin: 0;
             border: none;
         }
         .top-link {
@@ -155,7 +155,10 @@
             margin: 10px 0;
         }
         .youtube-card {
-            display: block;
+            display: flex;
+            align —
+
+System: items: center;
             background-color: #464b6d;
             color: oldlace;
             text-decoration: none;
@@ -168,11 +171,10 @@
             color: black;
         }
         .youtube-card img {
-            width: 100%;
-            max-width: 120px;
-            height: auto;
+            width: 120px;
+            height: 68px;
             border-radius: 4px;
-            margin-bottom: 8px;
+            margin-right: 10px;
         }
         .youtube-card span {
             font-size: 1.1em;
@@ -235,20 +237,20 @@
                     if (br && br.tagName === 'BR') br.remove();
                     p.remove();
                 });
-                tempDiv.querySelectorAll('select[name*="youtube" i], select[name*="Youtube" i], select[name*="YOUTUBE" i]').forEach(select => {
-                    console.log('Found YouTube select:', select.outerHTML);
+                tempDiv.querySelectorAll('select').forEach(select => {
+                    console.log('Found select element:', select.outerHTML);
                     const options = select.querySelectorAll('option');
+                    const div = document.createElement('div');
+                    div.className = 'youtube-cards';
                     if (options.length > 0) {
-                        const div = document.createElement('div');
-                        div.className = 'youtube-cards';
                         options.forEach(option => {
                             if (option.value && option.value.startsWith('http')) {
                                 const a = document.createElement('a');
                                 a.href = option.value;
                                 a.className = 'youtube-card';
                                 a.setAttribute('target', '_blank');
-                                // Placeholder thumbnail; replace with actual YouTube thumbnail URL if available
                                 const img = document.createElement('img');
+                                // Placeholder thumbnail; replace with YouTube thumbnail if available
                                 img.src = 'https://via.placeholder.com/120x68?text=Video';
                                 img.alt = 'Video Thumbnail';
                                 const span = document.createElement('span');
@@ -259,17 +261,18 @@
                             }
                         });
                         console.log('Created YouTube cards:', div.outerHTML);
-                        select.parentElement.replaceChild(div, select);
                     } else {
-                        console.log('No options found in select:', select.outerHTML);
-                        select.remove();
+                        console.log('No valid options found in select:', select.outerHTML);
+                        const p = document.createElement('p');
+                        p.className = 'error-message';
+                        p.textContent = 'No YouTube videos available.';
+                        div.appendChild(p);
                     }
+                    select.parentElement.replaceChild(div, select);
                 });
                 tempDiv.querySelectorAll('button, input[type="button"], input[type="submit"]').forEach(btn => {
-                    if (btn.hasAttribute('data-youtube-button') || btn.hasAttribute('onclick')) {
-                        console.log('Removed YouTube or onclick button:', btn.outerHTML);
-                        btn.remove();
-                    }
+                    console.log('Removed button:', btn.outerHTML);
+                    btn.remove();
                 });
                 tempDiv.querySelectorAll('a[href="/app/rosary.html"]').forEach(link => {
                     link.setAttribute('target', '_self');
