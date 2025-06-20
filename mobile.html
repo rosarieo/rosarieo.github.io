@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Holy Rosary - Mobile</title>
-    <link rel="icon" type="image/png" href="/images/png/favicon.ico">
+    <link rel="icon" type="image/png" href="/images/png/favicon.png">
     <link rel="stylesheet" href="https://fontlibrary.org/assets/fonts/analecta/8c7f0b7a8b8e7f8b7f8b7f8b7f8b7f8b/analecta.css" type="text/css"/>
     <link rel="stylesheet" href="https://fontlibrary.org/assets/fonts/rawline/9d8f0b7a8b8e7f8b7f8b7f8b7f8b7f8b/rawline.css" type="text/css"/>
     <style>
@@ -217,10 +217,10 @@
                 });
                 tempDiv.querySelectorAll('a').forEach(link => {
                     const href = link.getAttribute('href');
-                    console.log('Processing link:', href); // Debug
+                    console.log('Processing link:', href);
                     if (href && baseUrl.includes('/trent/trent.html') && !href.startsWith('http') && !href.startsWith('/') && !href.includes('/trent/')) {
                         link.setAttribute('href', `/trent/${href}`);
-                        console.log('Rewrote link to:', link.getAttribute('href')); // Debug
+                        console.log('Rewrote link to:', link.getAttribute('href'));
                     }
                 });
                 return tempDiv.innerHTML;
@@ -252,6 +252,13 @@
                             observer.disconnect();
                         });
                         observer.observe(mainContent, { childList: true, subtree: true });
+                        // Force scroll to top
+                        console.log('Scroll position before:', window.scrollY, mainContent.scrollTop);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        mainContent.scrollTo({ top: 0, behavior: 'smooth' });
+                        console.log('Scroll position after:', window.scrollY, mainContent.scrollTop);
+                        // Log focused element
+                        console.log('Active element:', document.activeElement.outerHTML || 'None');
                     })
                     .catch(error => {
                         console.error('Error fetching content:', error);
@@ -294,7 +301,7 @@
                         e.preventDefault();
                         const href = link.getAttribute('href');
                         const target = link.getAttribute('target');
-                        console.log('Clicked link:', href, 'Target:', target); // Debug
+                        console.log('Clicked link:', href, 'Target:', target);
                         if (href && (href.includes('/app/rosary.html') || target === '_self')) {
                             window.location.href = href;
                         } else if (href && href.startsWith('http')) {
@@ -303,7 +310,7 @@
                             window.scrollTo({ top: 0, behavior: 'smooth' });
                         } else if (href && href !== '#') {
                             const resolvedUrl = href.startsWith('/') ? href : `/${href}`;
-                            console.log('Resolved URL:', resolvedUrl); // Debug
+                            console.log('Resolved URL:', resolvedUrl);
                             loadContent(resolvedUrl);
                         }
                     };
