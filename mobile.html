@@ -179,11 +179,10 @@
         </div>
     </div>
     <script>
-
-window.goToNewPage = function() {
-  console.log("goToNewPage triggered!");
-  // Your navigation logic here, e.g., window.location.href = "somepage.html";
-};
+        window.goToNewPage = function() {
+            console.log("goToNewPage triggered!");
+            // Add specific navigation logic here if needed
+        };
 
         document.addEventListener('DOMContentLoaded', () => {
             // Toggle mobile menu
@@ -196,7 +195,7 @@ window.goToNewPage = function() {
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = content.innerHTML;
 
-                // Remove all script tags to prevent execution of goToNewPage
+                // Remove all script tags to prevent execution
                 tempDiv.querySelectorAll('script').forEach(script => {
                     console.log('Removed script:', script.outerHTML);
                     script.remove();
@@ -242,20 +241,13 @@ window.goToNewPage = function() {
                     goButton.type = 'button';
                     goButton.value = 'Go';
                     goButton.classList.add('youtube-go-button');
+                    goButton.style.fontSize = '1em';
                     select.insertAdjacentElement('afterend', goButton);
                     console.log('Injected Go button:', goButton.outerHTML);
                 });
 
-<input type="button" value="Go" id="goButton" style="font-size: 1em">
-<script>
-  document.getElementById('goButton').addEventListener('click', function() {
-    console.log("Button clicked!");
-    goToNewPage();
-  });
-</script>
-
                 // Adjust links
-                tempDiv.querySelectorAll('a[href="/app/rosary.html"]').forEach(link => {
+                tempDiv.queryVersAll('a[href="/app/rosary.html"]').forEach(link => {
                     link.setAttribute('target', '_self');
                     console.log('Added target="_self" to Rosary App link:', link.outerHTML);
                 });
@@ -468,6 +460,15 @@ window.goToNewPage = function() {
                     loadContent('/rosary.html');
                     attachMenuListeners();
                 });
+
+            // Add Go button listener for any static Go buttons
+            const goButton = document.querySelector('#goButton');
+            if (goButton) {
+                goButton.addEventListener('click', () => {
+                    console.log("Button clicked!");
+                    goToNewPage();
+                });
+            }
         });
     </script>
 </body>
