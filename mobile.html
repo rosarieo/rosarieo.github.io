@@ -247,7 +247,7 @@
                 });
 
                 // Adjust links
-                tempDiv.queryVersAll('a[href="/app/rosary.html"]').forEach(link => {
+                tempDiv.querySelectorAll('a[href="/app/rosary.html"]').forEach(link => {
                     link.setAttribute('target', '_self');
                     console.log('Added target="_self" to Rosary App link:', link.outerHTML);
                 });
@@ -273,13 +273,24 @@
                 console.log('Loading content from:', cleanUrl);
                 fetch(cleanUrl)
                     .then(response => {
-                        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                        if (!response.ok) {
+                            console.error('Fetch failed with status:', response.status, 'for URL:', cleanUrl);
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
                         return response.text();
                     })
                     .then(data => {
                         const parser = new DOMParser();
                         const doc = parser.parseFromString(data, 'text/html');
+                        if (!doc) {
+                            console.error('Failed to parse HTML from:', cleanUrl);
+                            throw new Error('Invalid HTML content');
+                        }
                         const content = doc.querySelector('body') || doc.body;
+                        if (!content) {
+                            console.error('No body content found in:', cleanUrl);
+                            throw new Error('No body content in response');
+                        }
                         const mainContent = document.getElementById('main-content');
                         mainContent.innerHTML = cleanContent(content, cleanUrl);
 
@@ -300,7 +311,7 @@
                         mainContent.scrollTo({ top: 0, behavior: 'smooth' });
                     })
                     .catch(error => {
-                        console.error('Error fetching content:', error);
+                        console.error('Error fetching content:', error.message, 'for URL:', cleanUrl);
                         document.getElementById('main-content').innerHTML = '<p class="error-message">Failed to load content. Check your connection or try again later.</p>';
                     });
             }
@@ -404,12 +415,19 @@
             // Fetch topnav from rosary.html
             fetch('/rosary.html')
                 .then(response => {
-                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                    if (!response.ok) {
+                        console.error('Fetch topnav failed with status:', response.status);
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
                     return response.text();
                 })
                 .then(data => {
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(data, 'text/html');
+                    if (!doc) {
+                        console.error('Failed to parse topnav HTML');
+                        throw new Error('Invalid topnav HTML');
+                    }
                     const topnav = doc.querySelector('div.topnav');
                     const navLinks = document.getElementById('nav-links');
 
@@ -444,7 +462,7 @@
                     }
                 })
                 .catch(error => {
-                    console.error('Error fetching topnav:', error);
+                    console.error('Error fetching topnav:', error.message);
                     const navLinks = document.getElementById('nav-links');
                     navLinks.innerHTML = '';
                     fallbackMenu.forEach(item => {
