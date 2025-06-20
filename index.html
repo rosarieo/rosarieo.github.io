@@ -8,12 +8,6 @@
 <title>pray the rosary</title>
 <link href="ourlady.css" rel="stylesheet" type="text/css" media="all">
 <link rel="icon" type="image/png" href="/images/png/favicon.png">
-<!-- Redirect Mobile Devices -->
-<script type="text/javascript">
-    if (screen.width <= 699) {
-    document.location = "mobile.html";
-    }
-</script>
 </head>
 <body>
 <hr style="height:125px; visibility:hidden;" />
@@ -29,5 +23,26 @@
 <a href="https://form.jotform.com/210341816022138" ><img src="images/png/sacredheart_300px_contact.png" style="width:8%; height: auto; position:absolute; right:3%; bottom:3%;" >
 <!-- <img src="images/png/Sede_vacante_2sm.png" style="width:5%; height: auto; position:absolute; right:3%; bottom:3%;" > -->
 </footer>
+     <noscript>
+       <div class="center">
+            <p>JavaScript is disabled. Please enable it or visit <a href="mobile.html">mobile.html</a> on mobile devices.</p>
+        </div>
+    </noscript>
+    <script>
+    // Redirect Mobile Devices
+    // Prevent redirect loop
+    if (window.location.pathname !== '/mobile.html') {
+        // Check CSS pixel width (modern approach)
+        if (window.matchMedia('(max-width: 768px)').matches) {
+            window.location.href = '/mobile.html';
+        } else {
+            // Fallback: Check user-agent for mobile devices
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            if (isMobile && window.innerWidth <= 768) {
+                window.location.href = '/mobile.html';
+            }
+        }
+    }
+    </script>
 </html>
 
