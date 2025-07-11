@@ -324,9 +324,14 @@
                 tempDiv.querySelectorAll('a').forEach(link => {
                     const href = link.getAttribute('href');
                     console.log('Processing link:', href);
-                    if (href && baseUrl.includes('/trent/trent.html') && !href.startsWith('http') && !href.startsWith('/') && !href.includes('/trent/')) {
-                        link.setAttribute('href', `/trent/${href}`);
-                        console.log('Rewrote link to:', link.getAttribute('href'));
+                    if (href && baseUrl.includes('/trent/') && !href.startsWith('http') && !href.startsWith('/') && !href.includes('/trent/')) {
+                        if (link.textContent.trim().toLowerCase() === 'back') {
+                            link.setAttribute('href', '/trent/trent.html');
+                            console.log('Rewrote back link to:', link.getAttribute('href'));
+                        } else {
+                            link.setAttribute('href', `/trent/${href}`);
+                            console.log('Rewrote link to:', link.getAttribute('href'));
+                        }
                     }
                     if (href && !href.startsWith('http') && !href.startsWith('#') && !href.includes('/app/rosary.html')) {
                         link.setAttribute('target', '');
