@@ -31,18 +31,71 @@
             }, 500); // Match fade-out duration
         }
 
+        function createShootingStar() {
+            const star = document.createElement('div');
+            star.className = 'shooting-star';
+
+            // Randomly select a starting side (0: top, 1: right, 2: bottom, 3: left)
+            const side = Math.floor(Math.random() * 4);
+            let x, y, angle;
+
+            switch (side) {
+                case 0: // Top
+                    x = Math.random() * window.innerWidth;
+                    y = 0;
+                    angle = '45deg';
+                    break;
+                case 1: // Right
+                    x = window.innerWidth;
+                    y = Math.random() * window.innerHeight;
+                    angle = '135deg';
+                    break;
+                case 2: // Bottom
+                    x = Math.random() * window.innerWidth;
+                    y = window.innerHeight;
+                    angle = '225deg';
+                    break;
+                case 3: // Left
+                    x = 0;
+                    y = Math.random() * window.innerHeight;
+                    angle = '315deg';
+                    break;
+            }
+
+            star.style.left = `${x}px`;
+            star.style.top = `${y}px`;
+            star.style.setProperty('--angle', angle);
+
+            // Random animation duration between 1s and 3s
+            const duration = Math.random() * 2 + 1;
+            star.style.animationDuration = `${duration}s`;
+
+            document.body.appendChild(star);
+
+            // Remove star after animation
+            setTimeout(() => star.remove(), duration * 1000);
+
+            // Schedule next shooting star
+            const delay = Math.random() * 4000 + 2000; // 2-6 seconds
+            setTimeout(createShootingStar, delay);
+        }
+
         window.onload = function() {
             updateNumber(); // Initial number
             setInterval(updateNumber, 15000); // Update every 15 seconds
+            createShootingStar(); // Start shooting stars
         };
     </script>
 </head>
 <body>
+    <div class="stars"></div>
+    <div class="stars2"></div>
+    <div class="stars3"></div>
     <a href="/index.html"><img src="images/png/transparent.png" style="width:1%; height: auto; position:absolute; left:0; top:0;"></a>
     <a href="/index.html"><img src="images/png/transparent.png" style="width:1%; height: auto; position:absolute; right:0; top:0;"></a>
     <hr style="height:250px; visibility:hidden;" />
     <center>
-        <a href="shortlist.html" target="_blank" rel="noopener noreferrer">
+        <a href="/shortlist.html" target="_blank" rel="noopener noreferrer">
             <img src="images/png/sacredheart_compressed.png" style="width: 20%; height: auto" />
         </a>
     </center>
